@@ -126,3 +126,94 @@
 // let customer = getCustomer(1);
 
 // console.log(customer?.birthday?.getDate);
+
+// Generics
+// function extractAndConvert<T extends object, U extends keyof T>(
+//   obj: T,
+//   key: U
+// ) {
+//   return "Value: " + obj[key];
+// }
+
+// extractAndConvert({ name: "Max" }, "name");
+
+// class DataStorage<T extends string | number | boolean> {
+//   private data: T[] = [];
+
+//   addItem(item: T) {
+//     this.data.push(item);
+//   }
+
+//   removeItem(item: T) {
+//     if (this.data.indexOf(item) === -1) {
+//       return;
+//     }
+//     this.data.splice(this.data.indexOf(item), 1); // -1
+//   }
+
+//   getItems() {
+//     return [...this.data];
+//   }
+// }
+
+// const textStorage = new DataStorage<string>();
+// textStorage.addItem("Max");
+// textStorage.addItem("Manu");
+// textStorage.removeItem("Max");
+// console.log(textStorage.getItems());
+
+// Decorators
+
+const config: { [input: string]: string[] } = {};
+
+const addValidator = (input: string, type: string) => {
+  config[input] = config[input] ? [...config[input], type] : [type];
+
+  console.log(input, type);
+};
+
+const Required = (_: any, prop: string) => {
+  addValidator(prop, "required");
+};
+const Maxlength = (_: any, prop: string) => addValidator(prop, "maxlength");
+const Positive = (_: any, prop: string) => addValidator(prop, "positive");
+
+const validate = (course: any) =>
+  Object.entries(config).every(([input, types]) =>
+    types.every(
+      (type) =>
+        (type === "required" && course[input]) ||
+        (type === "positive" && course[input] > 0) ||
+        (type === "maxlength" && course[input].length < 5)
+    )
+  );
+
+class Course {
+  @Required @Maxlength title: string;
+  @Required @Positive price: number;
+
+  constructor(title: string, price: number) {
+    this.title = title;
+    this.price = price;
+  }
+}
+
+const courseForm = document.querySelector("form")!;
+courseForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const titleEl = document.getElementById("title") as HTMLInputElement;
+  const priceEl = document.getElementById("price") as HTMLInputElement;
+
+  const title = titleEl.value;
+  const price = +priceEl.value;
+
+  const createdCourse = new Course(title, price);
+
+  if (!validate(createdCourse)) {
+    alert("Invalid input, please try again!");
+    return;
+  }
+  console.log(createdCourse);
+});
+
+console.log(config);
