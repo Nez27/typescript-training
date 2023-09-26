@@ -168,15 +168,23 @@ const config: { [input: string]: string[] } = {};
 
 const addValidator = (input: string, type: string) => {
   config[input] = config[input] ? [...config[input], type] : [type];
-
-  console.log(input, type);
 };
 
 const Required = (_: any, prop: string) => {
   addValidator(prop, "required");
 };
-const Maxlength = (_: any, prop: string) => addValidator(prop, "maxlength");
+
 const Positive = (_: any, prop: string) => addValidator(prop, "positive");
+
+let lengthNumber: number;
+
+function Length(length: number) {
+  return function (_: any, property: string) {
+    addValidator(property, "length");
+
+    lengthNumber = length;
+  };
+}
 
 const validate = (course: any) =>
   Object.entries(config).every(([input, types]) =>
@@ -184,12 +192,12 @@ const validate = (course: any) =>
       (type) =>
         (type === "required" && course[input]) ||
         (type === "positive" && course[input] > 0) ||
-        (type === "maxlength" && course[input].length < 5)
+        (type === "length" && course[input].length < lengthNumber)
     )
   );
 
 class Course {
-  @Required @Maxlength title: string;
+  @Required @Length(4) title: string;
   @Required @Positive price: number;
 
   constructor(title: string, price: number) {
