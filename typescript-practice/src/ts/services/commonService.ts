@@ -1,33 +1,20 @@
 import {
+  timeOutConnect,
   convertDataObjectToModel,
   convertModelToDataObject,
-  timeOutConnect,
 } from '../helpers/helpers';
+import { dataObj } from '../helpers/interface';
 import FirebaseService from './firebaseService';
 
-export default class CommonService {
-  constructor() {
-    this.defaultPath = '/';
-    this.firebaseService = FirebaseService;
-  }
+export default class CommonService<T extends dataObj> {
+  private defaultPath: string = '/';
+  private firebaseService = FirebaseService;
 
   /**
-   * Connect to Firebase Databse
+   * Connect to Firebase Database
    */
   connectToDb() {
     this.firebaseService.reconnect();
-  }
-
-  async getDataFromProp(property, value, path = this.defaultPath) {
-    this.connectToDb();
-    const data = this.firebaseService.getDataFromProp(path, property, value);
-    const result = await timeOutConnect(data);
-
-    if (result.id && result.data) {
-      return convertDataObjectToModel(result);
-    }
-
-    return null;
   }
 
   /**
@@ -35,9 +22,9 @@ export default class CommonService {
    * @param {*} data The data wants to save on database
    * @param {string} path The path of database
    */
-  async save(model) {
+  async save(model: T): Promise<void> {
     this.connectToDb();
-    const results = convertModelToDataObject(model);
+    const results: T = convertModelToDataObject(model);
 
     const saveData = this.firebaseService.save(
       results.data,
@@ -53,52 +40,70 @@ export default class CommonService {
    * @param {string} path The path of database
    * @returns {Object || null} Return the object if has, otherwise return null
    */
-  async getDataFromId(id, path = this.defaultPath) {
+  async getDataFromId(
+    id: string,
+    path: string = this.defaultPath,
+  ): Promise<object | null> {
     this.connectToDb();
-    const result = await this.firebaseService.getDataFromId(id, path);
-    const data = await timeOutConnect(result);
 
-    if (data) return data;
+    const data = await timeOutConnect(
+      this.firebaseService.getDataFromId(id, path),
+    );
+
+    if (typeof data !== 'string') return data;
 
     return null;
   }
 
-  async getAllDataFromPath(path = this.defaultPath) {
+  async getAllDataFromPath(path = this.defaultPath): Promise<object[] | null> {
     this.connectToDb();
 
     const results = await timeOutConnect(
       this.firebaseService.getAllDataFromPath(path),
     );
 
-    if (results) {
+    if (typeof results !== 'string') {
       // Convert format object
       return results.map((data) => {
-        return convertDataObjectToModel(data);
+        const tempData: dataObj = data as dataObj;
+
+        return convertDataObjectToModel(tempData);
       });
     }
 
     return null;
   }
 
-  async getListDataFromProp(property, value, path = this.defaultPath) {
+  async getListDataFromProp(
+    property: string,
+    value: object,
+    path: string = this.defaultPath,
+  ): Promise<object[] | null> {
     this.connectToDb();
 
     const results = await timeOutConnect(
       this.firebaseService.getListDataFromProp(path, property, value),
     );
-    if (results) {
+
+    if (results && typeof results !== 'string') {
       // Convert format object
 
       return results.map((data) => {
-        return convertDataObjectToModel(data);
+        const tempData: dataObj = data as dataObj;
+
+        return convertDataObjectToModel(tempData);
       });
     }
 
     return null;
   }
 
-  async deleteData(id, path = this.defaultPath) {
+  async deleteData(
+    id: string,
+    path = this.defaultPath,
+  ): Promise<string | void> {
     this.connectToDb();
+
     await timeOutConnect(this.firebaseService.delete(id, path));
   }
 }

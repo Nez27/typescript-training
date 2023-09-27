@@ -5,19 +5,19 @@ class LocalStorageService {
     this.localStorage = localStorage;
   }
 
-  add(key: string, value: string) {
+  add(key: string, value: string): void {
     this.localStorage.setItem(key, value);
   }
 
-  get(key: string) {
+  get(key: string): string | null {
     return this.localStorage.getItem(key);
   }
 
-  remove(key: string) {
+  remove(key: string): void {
     this.localStorage.removeItem(key);
   }
 
-  clear() {
+  clear(): void {
     this.localStorage.clear();
   }
 }

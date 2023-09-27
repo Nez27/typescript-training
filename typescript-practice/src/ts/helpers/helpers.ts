@@ -1,6 +1,7 @@
 import * as MESSAGE from '../constants/message';
 import { TIME_OUT_SEC, REGEX } from '../constants/config';
 import FirebaseService from '../services/firebaseService';
+import { dataObj } from './interface';
 
 /**
  * Validate password
@@ -45,10 +46,10 @@ export const createIdUser = (): number => {
  * @param {Function} action The action need to be perform.
  * @returns { Object || Error } Return the any object from Firebase or Error
  */
-export const timeOutConnect = async (
-  action: Promise<object>,
-): Promise<string | object> => {
-  const result: object | string = await Promise.race([
+export const timeOutConnect = async <T>(
+  action: Promise<T>,
+): Promise<string | T> => {
+  const result: T | string = await Promise.race([
     action,
     timeout(TIME_OUT_SEC),
   ]);
@@ -56,7 +57,7 @@ export const timeOutConnect = async (
   return result;
 };
 
-export const renderRequiredText = (field: string, element: Element) => {
+export const renderRequiredText = (field: string, element: Element): void => {
   const markup: string = `
     <p class="error-text">${MESSAGE.REQUIRED_MESSAGE(field)}</p>
   `;
@@ -64,6 +65,21 @@ export const renderRequiredText = (field: string, element: Element) => {
   element.insertAdjacentHTML('afterend', markup);
 };
 
-export const redirectToLoginPage = () => {
+export const redirectToLoginPage = (): void => {
   window.location.replace('/login');
+};
+
+export const convertDataObjectToModel = (dataObj: {
+  id: string;
+  data: object;
+}): dataObj => {
+  const { id } = dataObj;
+
+  return { id, ...dataObj.data } as dataObj;
+};
+
+export const convertModelToDataObject = <T extends dataObj>(model: T): T => {
+  const { id, ...data } = model;
+
+  return { id, data } as T;
 };

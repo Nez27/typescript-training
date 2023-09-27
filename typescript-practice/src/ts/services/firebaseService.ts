@@ -29,25 +29,25 @@ class FirebaseService {
    * @param {string} path The path of database need to be save
    * @returns {Promise} Return the resolves when write to database completed
    */
-  save(data: object, path: string): Promise<any> {
+  save(data: object, path: string): Promise<void> {
     return set(ref(this.db, path), data);
   }
 
-  delete(id: string, path: string) {
+  delete(id: string, path: string): Promise<void> {
     return remove(ref(this.db, path + id));
   }
 
   /**
    * Disconnect to database
    */
-  disconnect() {
+  disconnect(): void {
     goOffline(this.db);
   }
 
   /**
    * Reconnect to database
    */
-  reconnect() {
+  reconnect(): void {
     goOnline(this.db);
   }
 
@@ -58,13 +58,18 @@ class FirebaseService {
    * @param {value} value The value to compare in database
    * @returns {Promise} Return the resolve when find completed
    */
-  getDataFromProp(path: string, property: string, value: object): Promise<any> {
+  getDataFromProp(
+    path: string,
+    property: string,
+    value: object,
+  ): Promise<object | null> {
     return new Promise((resolve) => {
       onValue(
         ref(this.db, path),
         (snapshot) => {
           let id: string | null = null;
           let data: object | null = null;
+          let result: object | null = null;
 
           // snapshot is a type of data by Firebase define
           snapshot.forEach((childSnapshot) => {
@@ -75,7 +80,12 @@ class FirebaseService {
               data = dataTemp;
             }
           });
-          resolve({ id, data });
+
+          if (id && data) {
+            result = { id, data };
+          }
+
+          resolve(result);
         },
         {
           onlyOnce: true,
@@ -90,7 +100,7 @@ class FirebaseService {
    * @param {string} path The path of data save in database
    * @returns {Promise} Return new Promise
    */
-  getDataFromId(id: string, path: string): Promise<any> {
+  getDataFromId(id: string, path: string): Promise<object> {
     return new Promise((resolve) => {
       onValue(
         ref(this.db, path + id),
@@ -104,12 +114,12 @@ class FirebaseService {
     });
   }
 
-  getAllDataFromPath(path) {
+  getAllDataFromPath(path: string): Promise<object[]> {
     return new Promise((resolve) => {
       onValue(
         ref(this.db, path),
         (snapshot) => {
-          const listData: object[] = [];
+          let listData: object[] = [];
 
           // snapshot is a type of data by Firebase define
           snapshot.forEach((childSnapshot) => {
@@ -121,6 +131,7 @@ class FirebaseService {
 
             listData.push({ id, data });
           });
+
           resolve(listData);
         },
         {
@@ -130,7 +141,11 @@ class FirebaseService {
     });
   }
 
-  getListDataFromProp(path: string, property: string, value: object) {
+  getListDataFromProp(
+    path: string,
+    property: string,
+    value: object,
+  ): Promise<object[]> {
     return new Promise((resolve) => {
       onValue(
         ref(this.db, path),

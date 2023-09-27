@@ -26,6 +26,6 @@ export const UPDATE_TRANSACTION_SUCCESS = 'Update success!';
 
 export const REGISTER_SUCCESS = 'Register Success';
 
-export const REQUIRED_MESSAGE = (field) => `The ${field} is required!`;
+export const REQUIRED_MESSAGE = (field: string) => `The ${field} is required!`;
 
 export const INVALID_EMAIL_FORMAT = `The email is not correct!`;
