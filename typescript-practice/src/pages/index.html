@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../assets/images/favicon.ico" />
+    <link rel="stylesheet" href="../styles/_main.scss" />
+    <title>Money Lover Web</title>
+  </head>
+  <body class="home-page">
+    <!-- Add a wallet form -->
+    <dialog class="dialog" id="walletDialog">
+      <div class="dialog__add-wallet">
+        <!-- Dialog header -->
+        <div class="dialog__header">
+          <p class="dialog__title">Add a wallet first!</p>
+        </div>
+        <!-- Dialog body -->
+        <div class="dialog__body">
+          <form class="form" id="walletForm">
+            <div class="form__input-container">
+              <div class="form__input-field">
+                <p class="form__label">Wallet name</p>
+                <input
+                  type="text"
+                  class="form__input-text"
+                  placeholder="Your wallet name?"
+                  name="walletName"
+                  minlength="3"
+                />
+              </div>
+            </div>
+            <div class="form__currency-balance">
+              <div class="form__input-field">
+                <p class="form__label">Currency</p>
+                <div class="form__wrap-text-icon">
+                  <img
+                    src="../assets/images/dollar-icon.svg"
+                    alt="Dollar icon"
+                  />
+                  <p class="form__text-currency">United States Dollar</p>
+                </div>
+              </div>
+              <div class="form__input-container">
+                <div class="form__input-field">
+                  <p class="form__label">Initial Balance</p>
+                  <input
+                    type="number"
+                    class="form__input-balance"
+                    name="amount"
+                  />
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="form__save-btn">SAVE</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+    <!-- End form -->
+    <!-- Add budget form -->
+    <dialog class="dialog" id="budgetDialog">
+      <div class="dialog__add-budget">
+        <!-- Header -->
+        <div class="dialog__header">
+          <p class="dialog__title">Add budget</p>
+        </div>
+        <!-- Body -->
+        <div class="dialog__body">
+          <form class="form" id="formAddBudget">
+            <div class="form__date-amount-input">
+              <div class="form__input-container">
+                <div class="form__input-field">
+                  <p class="form__label">Date</p>
+                  <div class="date-input-container">
+                    <input
+                      class="input-date"
+                      type="date"
+                      name="selected_date"
+                    />
+                    <div class="icon-btn"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="form__input-container">
+                <div class="form__input-field">
+                  <p class="form__label">Amount</p>
+                  <input
+                    class="form__input-balance"
+                    type="number"
+                    min="1"
+                    name="amount"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form__note-input">
+              <p class="form__label">Note</p>
+              <input
+                class="form__input-text"
+                type="text"
+                name="note"
+                placeholder="Note"
+              />
+            </div>
+            <div class="form__action">
+              <button class="form__cancel-btn" type="button">CANCEL</button>
+              <button type="submit" class="form__save-btn">SAVE</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+    <!-- End form -->
+    <!-- Add, edit, delete transaction form -->
+    <dialog class="dialog" id="transactionDialog">
+      <div class="dialog__add-transaction">
+        <!-- Header-->
+        <div class="dialog__header">
+          <p class="dialog__title">Add transaction</p>
+          <button type="button" class="form__delete-btn">DELETE</button>
+        </div>
+        <!-- Body -->
+        <div class="dialog__body">
+          <form class="form" id="formAddTransaction">
+            <input type="text" name="id_transaction" hidden />
+            <div class="form__date-category-amount-input">
+              <div class="form__input-container">
+                <div class="form__input-field">
+                  <p class="form__label">Date</p>
+                  <div class="date-input-container">
+                    <input
+                      class="input-date"
+                      type="date"
+                      name="selected_date"
+                    />
+                    <span class="icon-btn"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="form__input-container">
+                <div class="form__input-field" id="selectCategory">
+                  <p class="form__label">Category</p>
+                  <div class="category-input-container">
+                    <img
+                      class="category-icon"
+                      src="../assets/images/question-icon.svg"
+                      alt="Question icon"
+                    />
+                    <input
+                      type="text"
+                      name="category_name"
+                      class="category-name"
+                      placeholder="Select Category"
+                    />
+                    <div class="icon-btn"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="form__input-container">
+                <div class="form__input-field">
+                  <p class="form__label">Amount</p>
+                  <input
+                    class="form__input-balance"
+                    type="number"
+                    name="amount"
+                    value="0"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form__note-input">
+              <p class="form__label">Note</p>
+              <input
+                class="form__input-text"
+                type="text"
+                name="note"
+                placeholder="Note"
+              />
+            </div>
+            <div class="form__action">
+              <button type="button" class="form__cancel-btn">CANCEL</button>
+              <button type="submit" class="form__save-btn">SAVE</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+    <!-- End form -->
+    <!-- Select category form -->
+    <dialog class="dialog" id="categoryDialog">
+      <div class="dialog__select-category">
+        <div class="dialog__header">
+          <div class="dialog__title-container">
+            <div formmethod="dialog" class="close-icon"></div>
+            <div class="dialog__title">Select category</div>
+          </div>
+          <form class="form">
+            <div class="form__search-container">
+              <input
+                type="text"
+                name="category"
+                class="form__category-input-field"
+                placeholder="Search"
+              />
+              <button type="submit" class="form__search-btn">
+                <img src="../assets/images/icon-search.svg" alt="Search icon" />
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="dialog__body">
+          <div class="list-category"></div>
+        </div>
+      </div>
+    </dialog>
+    <!-- End form -->
+    <!-- Start header -->
+    <header class="header">
+      <div class="wrapper">
+        <div class="header__content">
+          <div class="header__left-content">
+            <div class="wallet">
+              <div class="wallet__icon">
+                <img src="../assets/images/icon.png" alt="Wallet Icon" />
+              </div>
+              <div class="wallet__info">
+                <p class="wallet__name">User</p>
+                <div class="wallet__dialog">
+                  <p class="logout-text">Log Out</p>
+                </div>
+                <p class="wallet__price">+$ 0.00</p>
+              </div>
+            </div>
+            <button class="header__add-btn" id="addBudget">Add budget</button>
+          </div>
+          <button class="header__add-btn" id="addTransaction">
+            Add transaction
+          </button>
+        </div>
+      </div>
+    </header>
+    <!-- End header -->
+    <div class="background">
+      <!-- Main app -->
+      <main class="main">
+        <div class="app">
+          <div class="app__container">
+            <!-- Tabs -->
+            <div class="app__tabs">
+              <button class="app__tab-item active">SUMMARY</button>
+              <button class="app__tab-item">TRANSACTION DETAILS</button>
+              <div class="app__line left"></div>
+            </div>
+            <!-- Start content app -->
+            <div class="app__contents">
+              <div class="app__content-item active">
+                <!-- Content summary -->
+                <div class="summary">
+                  <div class="inflow">
+                    <p class="inflow__text">Inflow</p>
+                    <p class="inflow__text--income">+$ 0.00</p>
+                  </div>
+                  <div class="outflow">
+                    <p class="outflow__text">Outflow</p>
+                    <p class="outflow__text--outcome">$ 0.00</p>
+                  </div>
+                  <div class="summary__line"></div>
+                  <p class="summary__total">+$ 0.00</p>
+                </div>
+                <!-- End content summary -->
+              </div>
+              <div class="app__content-item">
+                <!-- Start content transaction -->
+                <div class="transaction">
+                  <div class="transaction__list"></div>
+                </div>
+                <!-- End content transaction -->
+              </div>
+            </div>
+            <!-- End content app -->
+          </div>
+        </div>
+      </main>
+      <!-- End app -->
+    </div>
+  </body>
+</html>

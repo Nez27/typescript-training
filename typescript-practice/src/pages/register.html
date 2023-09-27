@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../assets/images/favicon.ico" />
+    <link rel="stylesheet" href="../styles/_main.scss" />
+    <title>Register - Money Lover</title>
+  </head>
+  <body class="register-page">
+    <main>
+      <div class="background">
+        <div class="wrapper">
+          <img
+            class="logo-web"
+            src="../assets/images/logo.svg"
+            alt="Logo web"
+          />
+          <!-- Register form -->
+          <form action="#" class="form" method="post" id="registerForm">
+            <div class="form__container">
+              <h1 class="form__title">Register</h1>
+              <p class="form__description">Using Money Lover account</p>
+              <div class="form__input-container">
+                <input
+                  type="text"
+                  class="form__input"
+                  placeholder="Email"
+                  name="email"
+                />
+              </div>
+              <div class="form__input-container">
+                <input
+                  type="password"
+                  name="password"
+                  class="form__input"
+                  placeholder="Password"
+                />
+              </div>
+              <div class="form__input-container">
+                <input
+                  type="password"
+                  name="password_confirm"
+                  class="form__input"
+                  placeholder="Confirm Password"
+                />
+              </div>
+
+              <button type="submit" class="form__submit-btn">Register</button>
+              <p class="form__redirect-signup-text">
+                Have you an account?
+                <a href="/login" class="form__link">Sign in</a>
+              </p>
+            </div>
+          </form>
+          <!-- End form -->
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

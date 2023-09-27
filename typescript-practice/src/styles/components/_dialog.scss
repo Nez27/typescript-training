@@ -1,0 +1,28 @@
+.dialog {
+  @extend %rounded-sm;
+
+  border: none;
+  background-color: $white;
+  padding: none;
+  transition: all 0.3s ease;
+
+  &__title {
+    font-size: $fs-x-lg;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  &::backdrop {
+    background-color: rgba($color: #000000, $alpha: 0.2);
+  }
+}
+
+// Login page
+.login-page,
+.register-page {
+  .dialog {
+    @extend %rounded;
+
+    padding: 0px;
+  }
+}
