@@ -9,6 +9,7 @@
   ],
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
+    "import/no-unresolved": "error",
     "prettier/prettier": [
       "error",
       {
@@ -22,6 +23,7 @@
     "no-process-exit": "off",
     "object-shorthand": "off",
     "class-methods-use-this": "off",
+    "no-shadow": "off",
     "node/no-unsupported-features/es-syntax": [
       "error",
       { "ignores": ["modules"] }
@@ -37,11 +39,18 @@
     ]
   },
   "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
     "import/resolver": {
       "node": {
         "extensions": [".js", ".ts", ".json"]
       }
     },
-    "import/extensions": [".js", ".ts", ".mjs"]
+    "import/extensions": {
+      "typescript": {
+        "alwaysTryTypes": true // always try to resolve types under
+      }
+    }
   }
 }
