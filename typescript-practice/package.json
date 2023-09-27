@@ -2,14 +2,15 @@
   "name": "typescript-practice",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "parcel src/pages/*.html"
+    "start": "parcel src/pages/*.html",
+    "build": "parcel build ./src/pages/*.html --no-cache --no-source-maps --dist-dir dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "firebase": "^10.4.0",
     "parcel": "^2.9.3"
   },
   "devDependencies": {
@@ -20,7 +21,8 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-import": "^2.25.2",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.3",
