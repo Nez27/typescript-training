@@ -9,6 +9,6 @@ export class DataObject<T> {
 
   constructor(dataObject: IDataObject<T>) {
     this.id = dataObject?.id ?? null;
-    this.data = dataObject.data;
+    this.data = dataObject.data as T;
   }
 }
