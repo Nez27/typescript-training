@@ -1,4 +1,4 @@
-import { TIME_OUT_ERROR } from '../constants/message';
+import { TIME_OUT_ERROR } from '../constants/messages/dialog';
 import { TIME_OUT_SEC } from '../constants/config';
 import FirebaseService from '../services/firebaseService';
 

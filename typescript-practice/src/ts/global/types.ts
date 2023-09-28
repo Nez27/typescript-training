@@ -5,6 +5,7 @@ export interface IDataObject<T> {
 
 export class DataObject<T> {
   public id: string;
+
   public data: T;
 
   constructor(dataObject: IDataObject<T>) {

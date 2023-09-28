@@ -2,10 +2,10 @@ export const DATABASE_URL =
   'https://javascript-training-81f7a-default-rtdb.asia-southeast1.firebasedatabase.app';
 export const TIME_OUT_SEC = 3;
 
-export enum BTN_CONTENT {
-  GOT_IT = 'Got it!',
-  OK = 'Ok',
-}
+export const BTN_CONTENT = {
+  GOT_IT: 'Got it!',
+  OK: 'Ok',
+};
 
 export const LOCAL_STORAGE = {
   ACCESS_TOKEN: 'accessToken',
