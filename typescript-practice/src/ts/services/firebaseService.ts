@@ -61,7 +61,7 @@ class FirebaseService {
   getDataFromProp(
     path: string,
     property: string,
-    value: object,
+    value: string,
   ): Promise<object | null> {
     return new Promise((resolve) => {
       onValue(

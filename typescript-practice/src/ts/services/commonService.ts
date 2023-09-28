@@ -6,8 +6,8 @@ import {
 import { DataObject } from '../global/types';
 import FirebaseService from './firebaseService';
 
-export default class CommonService<T extends DataObject<T>> {
-  private defaultPath: string = '/';
+export default class CommonService<T> {
+  public defaultPath: string = '/';
   private firebaseService = FirebaseService;
 
   /**
@@ -24,10 +24,11 @@ export default class CommonService<T extends DataObject<T>> {
    */
   async save(model: T): Promise<void> {
     this.connectToDb();
-    const results: T = convertModelToDataObject(model);
+
+    const results: DataObject<T> = convertModelToDataObject(model);
 
     const saveData = this.firebaseService.save(
-      results.data,
+      results.data as object,
       this.defaultPath + results.id,
     );
 
@@ -55,6 +56,22 @@ export default class CommonService<T extends DataObject<T>> {
     return null;
   }
 
+  async getDataFromProp(
+    property: string,
+    value: string,
+    path = this.defaultPath,
+  ) {
+    this.connectToDb();
+    const data = this.firebaseService.getDataFromProp(path, property, value);
+    const result = (await timeOutConnect(data)) as DataObject<T>;
+
+    if (result && typeof result === 'object') {
+      return convertDataObjectToModel(result);
+    }
+
+    return null;
+  }
+
   async getAllDataFromPath(path = this.defaultPath): Promise<object[] | null> {
     this.connectToDb();
 
@@ -68,7 +85,7 @@ export default class CommonService<T extends DataObject<T>> {
         const tempData = data as DataObject<T>;
 
         return convertDataObjectToModel(tempData);
-      });
+      }) as object[];
     }
 
     return null;
@@ -92,7 +109,7 @@ export default class CommonService<T extends DataObject<T>> {
         const tempData = data as DataObject<T>;
 
         return convertDataObjectToModel(tempData);
-      });
+      }) as object[];
     }
 
     return null;
