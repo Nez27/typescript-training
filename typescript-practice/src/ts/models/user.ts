@@ -1,4 +1,4 @@
-import { createIdUser } from '../helpers/helpers';
+import { createIdUser } from '../helpers/data';
 
 export default class User {
   private id: number;

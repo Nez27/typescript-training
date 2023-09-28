@@ -1,12 +1,12 @@
+import { timeOutConnect } from '../helpers/connect';
 import {
-  timeOutConnect,
   convertDataObjectToModel,
   convertModelToDataObject,
-} from '../helpers/helpers';
+} from '../helpers/data';
 import { DataObject } from '../global/types';
 import FirebaseService from './firebaseService';
 
-export default class CommonService<T extends DataObject> {
+export default class CommonService<T extends DataObject<T>> {
   private defaultPath: string = '/';
   private firebaseService = FirebaseService;
 
@@ -65,7 +65,7 @@ export default class CommonService<T extends DataObject> {
     if (typeof results === 'object') {
       // Convert format object
       return results.map((data) => {
-        const tempData = data as DataObject;
+        const tempData = data as DataObject<T>;
 
         return convertDataObjectToModel(tempData);
       });
@@ -89,7 +89,7 @@ export default class CommonService<T extends DataObject> {
       // Convert format object
 
       return results.map((data) => {
-        const tempData = data as DataObject;
+        const tempData = data as DataObject<T>;
 
         return convertDataObjectToModel(tempData);
       });
