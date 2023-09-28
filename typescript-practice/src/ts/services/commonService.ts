@@ -3,10 +3,10 @@ import {
   convertDataObjectToModel,
   convertModelToDataObject,
 } from '../helpers/helpers';
-import { dataObj } from '../helpers/interface';
+import { DataObject } from '../global/types';
 import FirebaseService from './firebaseService';
 
-export default class CommonService<T extends dataObj> {
+export default class CommonService<T extends DataObject> {
   private defaultPath: string = '/';
   private firebaseService = FirebaseService;
 
@@ -50,7 +50,7 @@ export default class CommonService<T extends dataObj> {
       this.firebaseService.getDataFromId(id, path),
     );
 
-    if (typeof data !== 'string') return data;
+    if (typeof data === 'object') return data;
 
     return null;
   }
@@ -62,10 +62,10 @@ export default class CommonService<T extends dataObj> {
       this.firebaseService.getAllDataFromPath(path),
     );
 
-    if (typeof results !== 'string') {
+    if (typeof results === 'object') {
       // Convert format object
       return results.map((data) => {
-        const tempData: dataObj = data as dataObj;
+        const tempData = data as DataObject;
 
         return convertDataObjectToModel(tempData);
       });
@@ -85,11 +85,11 @@ export default class CommonService<T extends dataObj> {
       this.firebaseService.getListDataFromProp(path, property, value),
     );
 
-    if (results && typeof results !== 'string') {
+    if (results && typeof results === 'object') {
       // Convert format object
 
       return results.map((data) => {
-        const tempData: dataObj = data as dataObj;
+        const tempData = data as DataObject;
 
         return convertDataObjectToModel(tempData);
       });

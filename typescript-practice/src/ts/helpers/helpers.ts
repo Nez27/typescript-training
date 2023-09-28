@@ -1,7 +1,7 @@
 import * as MESSAGE from '../constants/message';
 import { TIME_OUT_SEC, REGEX } from '../constants/config';
 import FirebaseService from '../services/firebaseService';
-import { dataObj } from './interface';
+import { DataObject } from '../global/types';
 
 /**
  * Validate password
@@ -72,13 +72,13 @@ export const redirectToLoginPage = (): void => {
 export const convertDataObjectToModel = (dataObj: {
   id: string;
   data: object;
-}): dataObj => {
+}): DataObject => {
   const { id } = dataObj;
 
-  return { id, ...dataObj.data } as dataObj;
+  return { id, ...dataObj.data } as DataObject;
 };
 
-export const convertModelToDataObject = <T extends dataObj>(model: T): T => {
+export const convertModelToDataObject = <T extends DataObject>(model: T): T => {
   const { id, ...data } = model;
 
   return { id, data } as T;

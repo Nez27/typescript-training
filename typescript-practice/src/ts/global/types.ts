@@ -1,4 +1,4 @@
-export interface dataObj {
+export interface DataObject {
   id: string;
   data: object;
 }
