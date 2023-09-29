@@ -14,6 +14,10 @@ export default class RegisterView extends AuthenticationView {
   constructor() {
     super();
 
+    this.initToast();
+    this.initLoader();
+    this.handleEventToast();
+
     this.toastBtn = document.querySelector('.toast__redirect-btn');
   }
 

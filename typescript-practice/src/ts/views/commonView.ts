@@ -1,43 +1,22 @@
 import { MarkIcon, TypeToast } from '../constants/config';
 
 export default class CommonView {
-  public rootElement: HTMLBodyElement | null;
+  public toastDialog: HTMLDialogElement | null = null;
 
-  public toastDialog: HTMLDialogElement | null;
+  public toastIcon: HTMLBodyElement | null = null;
 
-  public toast: HTMLBodyElement | null;
+  public toastBtn: HTMLBodyElement | null = null;
 
-  public toastIcon: HTMLBodyElement | null;
+  public toastTitle: HTMLBodyElement | null = null;
 
-  public toastBtn: HTMLBodyElement | null;
+  public toastContent: HTMLBodyElement | null = null;
 
-  public toastTitle: HTMLBodyElement | null;
-
-  public toastContent: HTMLBodyElement | null;
-
-  public spinner: HTMLBodyElement | null;
+  public spinner: HTMLBodyElement | null = null;
 
   constructor() {
-    this.rootElement = document.querySelector('body');
     this.toastDialog = document.querySelector('.dialog');
-    this.toast = document.querySelector('.toast');
-
-    this.toastIcon = this.toast ? this.toast.querySelector('.mark') : null;
-    this.toastBtn = this.toast
-      ? this.toast.querySelector('.toast__redirect-btn')
-      : null;
-    this.toastTitle = this.toast
-      ? this.toast.querySelector('.toast__title')
-      : null;
-    this.toastContent = this.toast
-      ? this.toast.querySelector('.toast__message')
-      : null;
 
     this.spinner = null;
-
-    // this.initToast();
-    // this.initLoader();
-    // this.handleEventToast();
   }
 
   /**
@@ -55,8 +34,28 @@ export default class CommonView {
       </dialog>
     `;
 
-    if (this.rootElement)
-      this.rootElement.insertAdjacentHTML('afterbegin', markup);
+    const body = document.querySelector('body');
+
+    if (body) body.insertAdjacentHTML('afterbegin', markup);
+
+    this.initToastEl();
+  }
+
+  initToastEl() {
+    this.toastDialog = document.querySelector('.dialog');
+
+    this.toastIcon = this.toastDialog
+      ? this.toastDialog.querySelector('.mark')
+      : null;
+    this.toastBtn = this.toastDialog
+      ? this.toastDialog.querySelector('.toast__redirect-btn')
+      : null;
+    this.toastTitle = this.toastDialog
+      ? this.toastDialog.querySelector('.toast__title')
+      : null;
+    this.toastContent = this.toastDialog
+      ? this.toastDialog.querySelector('.toast__message')
+      : null;
   }
 
   /**
@@ -81,7 +80,10 @@ export default class CommonView {
   ): void {
     // Remove old typeToast class if haved
     Object.keys(TypeToast).forEach((key) => {
-      CommonView.removeClassElement(TypeToast[key as TypeToast], this.toast);
+      CommonView.removeClassElement(
+        TypeToast[key as TypeToast],
+        this.toastDialog as HTMLBodyElement | null,
+      );
     });
 
     // Remove old icon toast if haved
@@ -91,13 +93,13 @@ export default class CommonView {
 
     // Init content toast
     if (
-      this.toast &&
+      this.toastDialog &&
       this.toastIcon &&
       this.toastTitle &&
       this.toastContent &&
       this.toastBtn
     ) {
-      this.toast.classList.add(
+      this.toastDialog.classList.add(
         typeToast === TypeToast.success ? TypeToast.success : TypeToast.error,
       );
       this.toastIcon.classList.add(
@@ -149,8 +151,8 @@ export default class CommonView {
   initLoader() {
     const markup = `<div class="loader hidden"></div>`;
 
-    if (this.rootElement)
-      this.rootElement.insertAdjacentHTML('afterbegin', markup);
+    const body = document.querySelector('body');
+    if (body) body.insertAdjacentHTML('afterbegin', markup);
 
     // Init element
     this.spinner = document.querySelector('.loader');
