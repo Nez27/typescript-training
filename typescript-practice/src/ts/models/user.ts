@@ -15,4 +15,16 @@ export default class User {
     this.password = password;
     this.accessToken = accessToken;
   }
+
+  get getPassword() {
+    return this.password;
+  }
+
+  set setAccessToken(accessToken: string) {
+    this.accessToken = accessToken;
+  }
+
+  get getAccessToken() {
+    return this.accessToken;
+  }
 }
