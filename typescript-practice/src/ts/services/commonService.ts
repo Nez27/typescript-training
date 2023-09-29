@@ -7,8 +7,13 @@ import { DataObject } from '../global/types';
 import FirebaseService from './firebaseService';
 
 export default class CommonService<T> {
-  public defaultPath: string = '/';
-  private firebaseService = FirebaseService;
+  public defaultPath: string;
+
+  public firebaseService = FirebaseService;
+
+  constructor(defaultPath?: string) {
+    this.defaultPath = defaultPath ? defaultPath : '/';
+  }
 
   /**
    * Connect to Firebase Database

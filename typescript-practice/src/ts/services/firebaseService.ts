@@ -13,6 +13,7 @@ import { DATABASE_URL } from '../constants/config';
 
 class FirebaseService {
   private app: FirebaseApp;
+
   private db: Database;
 
   constructor() {
@@ -119,7 +120,7 @@ class FirebaseService {
       onValue(
         ref(this.db, path),
         (snapshot) => {
-          let listData: object[] = [];
+          const listData: object[] = [];
 
           // snapshot is a type of data by Firebase define
           snapshot.forEach((childSnapshot) => {

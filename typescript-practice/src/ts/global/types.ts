@@ -13,3 +13,8 @@ export class DataObject<T> {
     this.data = dataObject.data as T;
   }
 }
+
+export type TError = {
+  title: string;
+  message: string;
+};

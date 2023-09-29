@@ -11,12 +11,12 @@ export const LOCAL_STORAGE = {
   ACCESS_TOKEN: 'accessToken',
 };
 
-export enum TYPE_TOAST {
+export enum TypeToast {
   success = 'success',
   error = 'error',
 }
-export enum MARK_ICON {
-  success = 'check',
+export enum MarkIcon {
+  success = 'success',
   error = 'error',
 }
 

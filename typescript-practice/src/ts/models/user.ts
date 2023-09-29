@@ -1,7 +1,7 @@
 import { createIdUser } from '../helpers/data';
 
 export default class User {
-  private id: number;
+  private readonly id: number;
 
   private email: string;
 
@@ -9,11 +9,11 @@ export default class User {
 
   private accessToken: string;
 
-  constructor(email: string, password: string, accessToken: string) {
+  constructor(email: string, password: string, accessToken?: string) {
     this.id = createIdUser();
     this.email = email;
-    this.password = password;
-    this.accessToken = accessToken;
+    this.password = password || '';
+    this.accessToken = accessToken || '';
   }
 
   get getPassword() {
@@ -26,5 +26,13 @@ export default class User {
 
   get getAccessToken() {
     return this.accessToken;
+  }
+
+  get getEmail() {
+    return this.email;
+  }
+
+  get getId() {
+    return this.id;
   }
 }

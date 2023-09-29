@@ -8,15 +8,15 @@ export default class UserService {
   private _commonService: CommonService<User>;
 
   constructor() {
-    this._commonService = new CommonService<User>();
+    this._commonService = new CommonService<User>('users/');
   }
 
   /**
    * Save user into database
-   * @param {Object} user The user object need to be saved into databae
+   * @param {Object} user The user object need to be saved into database
    */
-  saveUser(user: User): void {
-    this._commonService.save(user);
+  async saveUser(user: User): Promise<void> {
+    await this._commonService.save(user);
   }
 
   /**
