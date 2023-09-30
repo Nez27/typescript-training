@@ -1,7 +1,7 @@
 import { TypeToast, BTN_CONTENT } from '../constants/config';
 import AuthenticationView from './authenticationView';
 import User from '../models/user';
-import { redirectToLoginPage } from '../helpers/redirect';
+import { redirectToLoginPage } from '../helpers/url';
 import {
   DEFAULT_MESSAGE,
   DEFAULT_TITLE_ERROR_TOAST,
@@ -148,7 +148,7 @@ export default class RegisterView extends AuthenticationView {
       // Save user
       if (user) {
         // Check user exist
-        const userExist = await checkExistUser(user.getEmail);
+        const userExist = await checkExistUser(user.email);
         if (userExist) {
           throw Error(USER_EXIST_ERROR);
         } else {

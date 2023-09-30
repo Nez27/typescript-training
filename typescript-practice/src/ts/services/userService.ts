@@ -51,7 +51,7 @@ export default class UserService {
     const user = await this.getUserByEmail(email);
 
     // Check password
-    if (user && user.getPassword === password) {
+    if (user && user.password === password) {
       // Create token for user
       await this.createTokenUser(email);
 
@@ -71,14 +71,14 @@ export default class UserService {
       const newUserData = user;
 
       // Add token to user object
-      newUserData.setAccessToken = createToken();
+      newUserData.accessToken = createToken();
 
       this._commonService.save(newUserData);
 
       // Add access token to local storage
       LocalStorageService.add(
         LOCAL_STORAGE.ACCESS_TOKEN,
-        newUserData.getAccessToken,
+        newUserData.accessToken,
       );
     }
   }
