@@ -3,13 +3,14 @@ import Service from './services/index';
 import View from './views/index';
 
 export default class App {
-  private controller: Controller;
+  private _controller: Controller;
 
   constructor() {
-    this.controller = new Controller(new Service(), new View());
+    this._controller = new Controller(new Service(), new View());
   }
 
   start() {
-    this.controller.registerController.init();
+    this._controller.registerController.init();
+    this._controller.loginController.init();
   }
 }

@@ -4,14 +4,14 @@ import View from 'views';
 import RegisterView from 'views/registerView';
 
 export default class RegisterController {
-  public registerView: RegisterView;
+  public registerView: RegisterView | null = null;
 
   constructor(
     public service: Service,
     public view: View,
   ) {
-    this.registerView = view.registerView;
     this.service = service;
+    this.registerView = view.registerView;
   }
 
   handlerCheckUserValid(email: string): Promise<boolean> {

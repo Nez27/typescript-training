@@ -1,24 +1,24 @@
 class LocalStorageService {
-  private localStorage: Storage;
+  private _localStorage: Storage;
 
   constructor() {
-    this.localStorage = localStorage;
+    this._localStorage = localStorage;
   }
 
   add(key: string, value: string): void {
-    this.localStorage.setItem(key, value);
+    this._localStorage.setItem(key, value);
   }
 
   get(key: string): string | null {
-    return this.localStorage.getItem(key);
+    return this._localStorage.getItem(key);
   }
 
   remove(key: string): void {
-    this.localStorage.removeItem(key);
+    this._localStorage.removeItem(key);
   }
 
   clear(): void {
-    this.localStorage.clear();
+    this._localStorage.clear();
   }
 }
 
