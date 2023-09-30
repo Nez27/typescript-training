@@ -1,6 +1,8 @@
+import localStorageService from 'services/localStorageService';
 import { DataObject, IDataObject } from '../global/types';
+import { LOCAL_STORAGE } from 'constants/config';
 
-export const createIdUser = (): number => {
+export const generateId = (): number => {
   return new Date().getTime();
 };
 
@@ -29,4 +31,14 @@ export const createToken = (): string => {
     token += chars[Math.floor(Math.random() * chars.length)];
   }
   return token;
+};
+
+export const formatNumber = (number: number): string => {
+  return number.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+  });
+};
+
+export const clearAccessToken = (): void => {
+  localStorageService.remove(LOCAL_STORAGE.ACCESS_TOKEN);
 };

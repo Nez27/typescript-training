@@ -109,8 +109,4 @@ export default class UserService {
 
     return result || null;
   }
-
-  static clearAccessToken(): void {
-    LocalStorageService.remove(LOCAL_STORAGE.ACCESS_TOKEN);
-  }
 }

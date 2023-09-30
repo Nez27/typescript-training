@@ -1,3 +1,5 @@
+import Wallet from 'models/wallet';
+
 export interface IDataObject<T> {
   id: string;
   data: T;
@@ -14,10 +16,10 @@ export class DataObject<T> {
   }
 }
 
-export type TError = {
+export interface TError {
   title: string;
   message: string;
-};
+}
 
 export class CustomError extends Error {
   constructor(
@@ -26,4 +28,15 @@ export class CustomError extends Error {
   ) {
     super(message);
   }
+}
+
+export type TSignal = {
+  [key: string]: {
+    name: string;
+    handler: (value: Data) => void;
+  };
+};
+
+export interface Data {
+  wallet: Wallet;
 }

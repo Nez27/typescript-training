@@ -34,7 +34,7 @@ class FirebaseService {
     return set(ref(this._db, path), data);
   }
 
-  delete(id: string, path: string): Promise<void> {
+  delete(id: number, path: string): Promise<void> {
     return remove(ref(this._db, path + id));
   }
 
@@ -145,7 +145,7 @@ class FirebaseService {
   getListDataFromProp(
     path: string,
     property: string,
-    value: object,
+    value: string,
   ): Promise<object[]> {
     return new Promise((resolve) => {
       onValue(

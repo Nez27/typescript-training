@@ -1,4 +1,4 @@
-import { createIdUser } from '../helpers/data';
+import { generateId } from '../helpers/data';
 
 export default class User {
   private readonly _id: number;
@@ -10,7 +10,7 @@ export default class User {
   private _accessToken: string;
 
   constructor(email: string, password: string, accessToken?: string) {
-    this._id = createIdUser();
+    this._id = generateId();
     this._email = email;
     this._password = password || '';
     this._accessToken = accessToken || '';
