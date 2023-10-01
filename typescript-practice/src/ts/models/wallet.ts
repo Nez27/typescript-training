@@ -47,4 +47,14 @@ export default class Wallet {
   get amountWallet() {
     return this._inflow + this._outflow;
   }
+
+  get toObject() {
+    return {
+      id: this._id,
+      walletName: this._walletName,
+      inflow: this._inflow,
+      outflow: this._outflow,
+      idUser: this._idUser,
+    };
+  }
 }

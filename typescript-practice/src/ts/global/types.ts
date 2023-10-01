@@ -1,3 +1,4 @@
+import User from 'models/user';
 import Wallet from 'models/wallet';
 
 export interface IDataObject<T> {
@@ -39,4 +40,5 @@ export type TSignal = {
 
 export interface Data {
   wallet: Wallet;
+  user: User;
 }

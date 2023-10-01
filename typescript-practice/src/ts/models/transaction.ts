@@ -51,4 +51,15 @@ export default class Transaction {
   get idUser() {
     return this._idUser;
   }
+
+  get toObject() {
+    return {
+      id: this._id,
+      categoryName: this._categoryName,
+      date: this._date,
+      note: this._note,
+      amount: this._amount,
+      idUser: this._idUser,
+    } as Transaction;
+  }
 }

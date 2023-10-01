@@ -18,13 +18,9 @@ export default class HomeView extends CommonView {
 
   private _cancelBtns: NodeListOf<Element>;
 
-  private _saveBtns: NodeListOf<Element>;
-
   private _dialogs: NodeListOf<Element>;
 
   private _amountInputs: NodeListOf<Element>;
-
-  private _transactionDialog: HTMLElement | null;
 
   private _walletView: WalletView;
 
@@ -52,12 +48,9 @@ export default class HomeView extends CommonView {
     this._tabs = document.querySelectorAll('.app__tab-item');
     this._allContent = document.querySelectorAll('.app__content-item');
     this._cancelBtns = document.querySelectorAll('.form__cancel-btn');
-    this._saveBtns = document.querySelectorAll('.form__save-btn');
     this._dialogs = document.querySelectorAll('.dialog');
 
     this._amountInputs = document.querySelectorAll('.form__input-balance');
-
-    this._transactionDialog = document.getElementById('transactionDialog');
 
     this._walletView = new WalletView();
   }
@@ -144,6 +137,7 @@ export default class HomeView extends CommonView {
   sendData() {
     const data: Data = {
       wallet: this._wallet!,
+      user: this._user!,
     };
 
     this._transform!.onSendSignal('homeView', data);
@@ -151,6 +145,8 @@ export default class HomeView extends CommonView {
 
   updateData(data: Data) {
     if (data.wallet) this._wallet = data.wallet;
+
+    if (data.user) this._user = data.user;
   }
 
   /**
