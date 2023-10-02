@@ -32,18 +32,6 @@ export default class HomeController {
     return this.service.transactionService.saveTransaction(transaction);
   }
 
-  // handlerGetAllCategory() {
-  //   return this.service.categoryService.getAllCategory();
-  // }
-
-  // handlerGetAllTransactions(idUser) {
-  //   return this.service.transactionService.getListTransactionByIdUser(idUser);
-  // }
-
-  // handlerDeleteTransaction(idTransaction) {
-  //   return this.service.transactionService.deleteTransaction(idTransaction);
-  // }
-
   init() {
     if (this.homeView) {
       this.homeView.initFunction(
