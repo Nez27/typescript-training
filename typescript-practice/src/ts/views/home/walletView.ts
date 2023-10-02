@@ -148,7 +148,6 @@ export default class WalletView {
         await this._loadData!();
         this._loadEvent!();
         this._showSuccessToast!(ADD_WALLET_SUCCESS, DEFAULT_MESSAGE);
-        await this._loadData!(); // Load data from database into page
 
         this._toggleLoaderSpinner!();
       }

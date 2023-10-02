@@ -53,6 +53,10 @@ export default class HomeView extends CommonView {
     this._amountInputs = document.querySelectorAll('.form__input-balance');
 
     this._walletView = new WalletView();
+
+    this.initToast();
+    this.initLoader();
+    this.handleEventToast();
   }
 
   initFunction(
@@ -159,7 +163,7 @@ export default class HomeView extends CommonView {
     const walletName = document.querySelector('.wallet__name');
     const walletPrice = document.querySelector('.wallet__price');
     const walletNameValue = wallet!.walletName;
-    const walletAmountValue = wallet!.amountWallet;
+    const walletAmountValue = wallet!.inflow + wallet!.outflow;
 
     const sign = walletAmountValue >= 0 ? '+' : '-';
 

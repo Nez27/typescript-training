@@ -35,4 +35,13 @@ export default class User {
   get id() {
     return this._id;
   }
+
+  get toObject() {
+    return {
+      id: this._id,
+      email: this._email,
+      password: this._password,
+      accessToken: this.accessToken,
+    } as User;
+  }
 }
