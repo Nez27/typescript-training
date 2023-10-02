@@ -5,10 +5,10 @@ import CommonService from './commonService';
 import LocalStorageService from './localStorageService';
 
 export default class UserService {
-  private _commonService: CommonService<User>;
+  private commonService: CommonService<User>;
 
   constructor() {
-    this._commonService = new CommonService<User>('users/');
+    this.commonService = new CommonService<User>('users/');
   }
 
   /**
@@ -16,7 +16,7 @@ export default class UserService {
    * @param {Object} user The user object need to be saved into database
    */
   async saveUser(user: User): Promise<void> {
-    await this._commonService.save(user);
+    await this.commonService.save(user);
   }
 
   /**
@@ -36,7 +36,7 @@ export default class UserService {
    * @returns {Object || null} Return new User Object if find, otherwise return null.
    */
   async getUserByEmail(email: string): Promise<User | null> {
-    const result = await this._commonService.getDataFromProp('email', email);
+    const result = await this.commonService.getDataFromProp('email', email);
 
     return result || null;
   }
@@ -73,7 +73,7 @@ export default class UserService {
       // Add token to user object
       newUserData.accessToken = createToken();
 
-      this._commonService.save(newUserData);
+      this.commonService.save(newUserData);
 
       // Add access token to local storage
       LocalStorageService.add(
@@ -102,15 +102,11 @@ export default class UserService {
    * @returns {Object || null} Return new User Object if find, otherwise return null.
    */
   async getUserByToken(accessToken: string): Promise<User | null> {
-    const result = await this._commonService.getDataFromProp(
+    const result = await this.commonService.getDataFromProp(
       'accessToken',
       accessToken,
     );
 
     return result || null;
-  }
-
-  static clearAccessToken(): void {
-    LocalStorageService.remove(LOCAL_STORAGE.ACCESS_TOKEN);
   }
 }

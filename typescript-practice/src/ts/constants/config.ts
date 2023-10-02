@@ -32,3 +32,34 @@ export const URL = {
   REGISTER: 'register',
   HOME: '',
 };
+
+export const DEFAULT_CATEGORY = {
+  INCOME: 'Income',
+};
+
+export const REMOVE_CATEGORY = ['Income'];
+
+export const DAY = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+export const MONTH = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];

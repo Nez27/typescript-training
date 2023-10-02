@@ -14,7 +14,7 @@ export default class CommonView {
   public spinner: HTMLBodyElement | null = null;
 
   constructor() {
-    this.toastDialog = document.querySelector('.dialog');
+    this.toastDialog = document.querySelector('.dialog .toast');
 
     this.spinner = null;
   }
