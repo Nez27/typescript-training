@@ -92,7 +92,9 @@ export default class TransactionTabView {
       },
     );
 
-    tempList.sort((a, b) => b.transactions[0].id - a.transactions[0].id);
+    tempList.sort(
+      (a, b) => parseInt(b.transactions[0].id) - parseInt(a.transactions[0].id),
+    );
 
     return tempList;
   }
@@ -176,7 +178,7 @@ export default class TransactionTabView {
           )!;
 
           if (transactionTime) {
-            const idTransaction = +(<HTMLElement>transactionTime).dataset.id!;
+            const idTransaction = (<HTMLElement>transactionTime).dataset.id!;
 
             // If it is income transaction, don't show dialog
             if (

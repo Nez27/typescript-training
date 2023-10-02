@@ -12,16 +12,16 @@ import {
 import { DATABASE_URL } from '../constants/config';
 
 class FirebaseService {
-  private _app: FirebaseApp;
+  app: FirebaseApp;
 
-  private _db: Database;
+  db: Database;
 
   constructor() {
     const firebaseConfig = {
       databaseURL: DATABASE_URL,
     };
-    this._app = initializeApp(firebaseConfig);
-    this._db = getDatabase(this._app);
+    this.app = initializeApp(firebaseConfig);
+    this.db = getDatabase(this.app);
   }
 
   /**
@@ -31,25 +31,25 @@ class FirebaseService {
    * @returns {Promise} Return the resolves when write to database completed
    */
   save(data: object, path: string): Promise<void> {
-    return set(ref(this._db, path), data);
+    return set(ref(this.db, path), data);
   }
 
-  delete(id: number, path: string): Promise<void> {
-    return remove(ref(this._db, path + id));
+  delete(id: string, path: string): Promise<void> {
+    return remove(ref(this.db, path + id));
   }
 
   /**
    * Disconnect to database
    */
   disconnect(): void {
-    goOffline(this._db);
+    goOffline(this.db);
   }
 
   /**
    * Reconnect to database
    */
   reconnect(): void {
-    goOnline(this._db);
+    goOnline(this.db);
   }
 
   /**
@@ -66,7 +66,7 @@ class FirebaseService {
   ): Promise<object | null> {
     return new Promise((resolve) => {
       onValue(
-        ref(this._db, path),
+        ref(this.db, path),
         (snapshot) => {
           let id: string | null = null;
           let data: object | null = null;
@@ -104,7 +104,7 @@ class FirebaseService {
   getDataFromId(id: string, path: string): Promise<object> {
     return new Promise((resolve) => {
       onValue(
-        ref(this._db, path + id),
+        ref(this.db, path + id),
         (snapshot) => {
           resolve(snapshot.val());
         },
@@ -118,7 +118,7 @@ class FirebaseService {
   getAllDataFromPath(path: string): Promise<object[]> {
     return new Promise((resolve) => {
       onValue(
-        ref(this._db, path),
+        ref(this.db, path),
         (snapshot) => {
           const listData: object[] = [];
 
@@ -145,11 +145,11 @@ class FirebaseService {
   getListDataFromProp(
     path: string,
     property: string,
-    value: string,
+    value: string | number,
   ): Promise<object[]> {
     return new Promise((resolve) => {
       onValue(
-        ref(this._db, path),
+        ref(this.db, path),
         (snapshot) => {
           let id: string;
           let data: object;

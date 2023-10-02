@@ -17,18 +17,18 @@ export default class TransactionService extends CommonService<Transaction> {
   }
 
   async getListTransactionByIdUser(
-    idUser: number,
+    idUser: string,
   ): Promise<Transaction[] | null> {
-    const results = this.getListDataFromProp(
+    const results = await this.getListDataFromProp(
       'idUser',
-      idUser.toString(),
+      idUser,
       this.defaultPath,
     );
 
     return results || null;
   }
 
-  async deleteTransaction(idTransaction: number) {
+  async deleteTransaction(idTransaction: string) {
     await this.deleteData(idTransaction);
   }
 }

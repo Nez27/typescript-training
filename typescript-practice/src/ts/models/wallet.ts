@@ -1,7 +1,7 @@
 import { generateId } from '../helpers/data';
 
 export default class Wallet {
-  id: number;
+  id: string;
 
   walletName: string;
 
@@ -9,13 +9,13 @@ export default class Wallet {
 
   outflow: number;
 
-  idUser: number;
+  idUser: string;
 
   constructor(
     walletName: string,
     inflow: number,
     outflow: number,
-    idUser: number,
+    idUser: string,
   ) {
     this.id = generateId();
     this.walletName = walletName;

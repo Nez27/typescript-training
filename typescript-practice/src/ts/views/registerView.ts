@@ -152,7 +152,7 @@ export default class RegisterView extends AuthenticationView {
         if (userExist) {
           throw Error(USER_EXIST_ERROR);
         } else {
-          await saveUser(user.toObject);
+          await saveUser(user);
           // Show toast success
           this.showRegisterSuccessToast();
 

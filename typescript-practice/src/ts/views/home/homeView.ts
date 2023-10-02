@@ -51,15 +51,15 @@ export default class HomeView extends CommonView {
 
   getInfoUserLogin: (() => Promise<User | null>) | null = null;
 
-  getWalletByIdUser: ((idUser: number) => Promise<Wallet | null>) | null = null;
+  getWalletByIdUser: ((idUser: string) => Promise<Wallet | null>) | null = null;
 
   getAllCategory: (() => Promise<Category[] | null>) | null = null;
 
   getAllTransactions:
-    | ((idUser: number) => Promise<Transaction[] | null>)
+    | ((idUser: string) => Promise<Transaction[] | null>)
     | null = null;
 
-  deleteTransaction: ((idTransaction: number) => Promise<void>) | null = null;
+  deleteTransaction: ((idTransaction: string) => Promise<void>) | null = null;
 
   saveWallet: ((wallet: Wallet) => Promise<void>) | null = null;
 
@@ -91,12 +91,12 @@ export default class HomeView extends CommonView {
 
   initFunction(
     getInfoUserLogin: () => Promise<User | null>,
-    getWalletByIdUser: (idUser: number) => Promise<Wallet | null>,
+    getWalletByIdUser: (idUser: string) => Promise<Wallet | null>,
     getAllCategory: () => Promise<Category[] | null>,
-    getAllTransactions: (idUser: number) => Promise<Transaction[] | null>,
+    getAllTransactions: (idUser: string) => Promise<Transaction[] | null>,
     saveWallet: (wallet: Wallet) => Promise<void>,
     saveTransaction: (transaction: Transaction) => Promise<void>,
-    deleteTransaction: (idTransaction: number) => Promise<void>,
+    deleteTransaction: (idTransaction: string) => Promise<void>,
     transform: Transform,
   ) {
     this.getInfoUserLogin = getInfoUserLogin;
@@ -191,6 +191,8 @@ export default class HomeView extends CommonView {
     this.summaryTabView.load();
 
     this.transactionTabView.loadTransactionTab();
+
+    await this.updateAmountWallet();
   }
 
   async loadPage() {
@@ -204,7 +206,7 @@ export default class HomeView extends CommonView {
     } else {
       // If user already login
       this.user = user;
-      this.wallet = await this.getWalletByIdUser!(user.id);
+      this.wallet = <Wallet>await this.getWalletByIdUser!(user.id);
 
       this.sendData();
       // Check user's wallet if have or not

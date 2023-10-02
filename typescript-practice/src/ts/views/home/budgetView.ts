@@ -125,12 +125,12 @@ export default class BudgetView {
         this.budgetDialog!.close(); // Close dialog
 
         const transaction = new Transaction(
-          0,
+          '',
           DEFAULT_CATEGORY.INCOME,
           date,
           note,
           +amount,
-          +this.wallet!.idUser,
+          this.wallet!.idUser,
         );
 
         await this.saveTransaction!(transaction);

@@ -5,8 +5,8 @@ import Transaction from 'models/transaction';
 import TransactionDetail from 'models/transactionDetail';
 import Category from 'models/category';
 
-export const generateId = (): number => {
-  return new Date().getTime();
+export const generateId = (): string => {
+  return new Date().getTime().toString();
 };
 
 export const convertDataObjectToModel = <T>(dataObj: DataObject<T>): T => {
@@ -110,7 +110,7 @@ export const createTransactionDetailObject = (
       return tempData;
     });
 
-    results.sort((a, b) => b.id - a.id);
+    results.sort((a, b) => parseInt(b.id) - parseInt(a.id));
 
     return results;
   };

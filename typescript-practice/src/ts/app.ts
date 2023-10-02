@@ -3,15 +3,15 @@ import Service from './services/index';
 import View from './views/index';
 
 export default class App {
-  private _controller: Controller;
+  controller: Controller;
 
   constructor() {
-    this._controller = new Controller(new Service(), new View());
+    this.controller = new Controller(new Service(), new View());
   }
 
   start() {
-    this._controller.registerController.init();
-    this._controller.loginController.init();
-    this._controller.homeController.init();
+    this.controller.registerController.init();
+    this.controller.loginController.init();
+    this.controller.homeController.init();
   }
 }

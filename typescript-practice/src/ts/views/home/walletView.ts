@@ -8,35 +8,32 @@ import { FIRST_ADD_WALLET_NOTE } from 'constants/defaultVariable';
 import { ADD_WALLET_SUCCESS, DEFAULT_MESSAGE } from 'constants/messages/dialog';
 
 export default class WalletView {
-  private _walletDialog: HTMLDialogElement | null = null;
+  walletDialog: HTMLDialogElement | null = null;
 
-  private _transform: Transform | null = null;
+  transform: Transform | null = null;
 
-  private _toggleLoaderSpinner: (() => void) | null = null;
+  toggleLoaderSpinner: (() => void) | null = null;
 
-  private _saveWallet: ((wallet: Wallet) => Promise<void>) | null = null;
+  saveWallet: ((wallet: Wallet) => Promise<void>) | null = null;
 
-  private _saveTransaction:
-    | ((transaction: Transaction) => Promise<void>)
-    | null = null;
+  saveTransaction: ((transaction: Transaction) => Promise<void>) | null = null;
 
-  private _loadTransactionData: (() => Promise<void>) | null = null;
+  loadTransactionData: (() => Promise<void>) | null = null;
 
-  private _loadData: (() => Promise<void>) | null = null;
+  loadData: (() => Promise<void>) | null = null;
 
-  private _loadEvent: (() => void) | null = null;
+  loadEvent: (() => void) | null = null;
 
-  private _showSuccessToast: ((title: string, message: string) => void) | null =
-    null;
+  showSuccessToast: ((title: string, message: string) => void) | null = null;
 
-  private _showErrorToast: ((error: string | TError) => void) | null = null;
+  showErrorToast: ((error: string | TError) => void) | null = null;
 
-  private _user: User | null = null;
+  user: User | null = null;
 
-  private _wallet: Wallet | null = null;
+  wallet: Wallet | null = null;
 
   constructor() {
-    this._walletDialog = document.getElementById(
+    this.walletDialog = document.getElementById(
       'walletDialog',
     ) as HTMLDialogElement;
 
@@ -54,49 +51,49 @@ export default class WalletView {
     showSuccessToast: (title: string, message: string) => void,
     showErrorToast: (error: string | TError) => void,
   ) {
-    this._transform = transform;
-    this._toggleLoaderSpinner = toggleLoaderSpinner;
-    this._saveWallet = saveWallet;
-    this._saveTransaction = saveTransaction;
-    this._loadTransactionData = loadTransactionData;
-    this._loadData = loadData;
-    this._loadEvent = loadEvent;
-    this._showSuccessToast = showSuccessToast;
-    this._showErrorToast = showErrorToast;
+    this.transform = transform;
+    this.toggleLoaderSpinner = toggleLoaderSpinner;
+    this.saveWallet = saveWallet;
+    this.saveTransaction = saveTransaction;
+    this.loadTransactionData = loadTransactionData;
+    this.loadData = loadData;
+    this.loadEvent = loadEvent;
+    this.showSuccessToast = showSuccessToast;
+    this.showErrorToast = showErrorToast;
   }
 
   subscribe() {
-    this._transform!.create('walletView', this.updateData.bind(this));
+    this.transform!.create('walletView', this.updateData.bind(this));
   }
 
   sendData() {
     const data = {
-      wallet: this._wallet!,
-      user: this._user!,
+      wallet: this.wallet!,
+      user: this.user!,
     };
 
-    this._transform!.onSendSignal('walletView', data);
+    this.transform!.onSendSignal('walletView', data);
   }
 
   updateData(data: Data) {
-    if (data.wallet) this._wallet = data.wallet;
+    if (data.wallet) this.wallet = data.wallet;
 
-    if (data.user) this._user = data.user;
+    if (data.user) this.user = data.user;
   }
 
   showDialog() {
-    this._walletDialog!.showModal();
+    this.walletDialog!.showModal();
   }
 
   addHandlerEventWalletForm() {
-    this._walletDialog!.addEventListener('submit', (e) => {
+    this.walletDialog!.addEventListener('submit', (e) => {
       e.preventDefault();
 
       this.clearErrorStyleWalletDialog();
       this.submitWalletForm();
     });
 
-    this._walletDialog!.addEventListener('input', (e) => {
+    this.walletDialog!.addEventListener('input', (e) => {
       const bodyDialog = (<Element>e.target!).closest('.dialog__body');
 
       this.changeBtnStyleWalletDialog(bodyDialog!);
@@ -106,8 +103,8 @@ export default class WalletView {
 
   clearErrorStyleWalletDialog() {
     const inputFieldEls =
-      this._walletDialog!.querySelectorAll('.form__input-field');
-    const errorTextEls = this._walletDialog!.querySelectorAll('.error-text');
+      this.walletDialog!.querySelectorAll('.form__input-field');
+    const errorTextEls = this.walletDialog!.querySelectorAll('.error-text');
 
     inputFieldEls.forEach((item) => {
       if (item.classList.contains('error-input'))
@@ -128,45 +125,45 @@ export default class WalletView {
       const amount = walletForm.get('amount') as string;
 
       if (this.validateWalletDialog(walletName, +amount)) {
-        this._walletDialog!.close();
-        this._toggleLoaderSpinner!();
+        this.walletDialog!.close();
+        this.toggleLoaderSpinner!();
 
-        const wallet = new Wallet(walletName, +amount, 0, this._user!.id);
-        this._wallet = wallet;
+        const wallet = new Wallet(walletName, +amount, 0, this.user!.id);
+        this.wallet = wallet;
 
         this.sendData();
 
-        await this._saveWallet!(wallet);
+        await this.saveWallet!(wallet);
         // Transaction info
         const transaction = new Transaction(
-          0,
+          '',
           'Income',
           new Date().toISOString().slice(0, 10),
           FIRST_ADD_WALLET_NOTE,
           +amount,
-          this._user!.id,
+          this.user!.id,
         );
 
-        await this._saveTransaction!(transaction);
+        await this.saveTransaction!(transaction);
         // Load data and event
-        await this._loadTransactionData!();
-        await this._loadData!();
-        this._loadEvent!();
+        await this.loadTransactionData!();
+        await this.loadData!();
+        this.loadEvent!();
 
-        this._showSuccessToast!(ADD_WALLET_SUCCESS, DEFAULT_MESSAGE);
+        this.showSuccessToast!(ADD_WALLET_SUCCESS, DEFAULT_MESSAGE);
 
-        this._toggleLoaderSpinner!();
+        this.toggleLoaderSpinner!();
       }
     } catch (error) {
       // Show toast error
-      this._showErrorToast!(error as string | TError);
-      this._toggleLoaderSpinner!();
+      this.showErrorToast!(error as string | TError);
+      this.toggleLoaderSpinner!();
     }
   }
 
   validateWalletDialog(walletName: string, amount: number) {
     const inputFieldEls =
-      this._walletDialog!.querySelectorAll('.form__input-field');
+      this.walletDialog!.querySelectorAll('.form__input-field');
 
     if (!walletName || !amount) {
       if (!walletName) {

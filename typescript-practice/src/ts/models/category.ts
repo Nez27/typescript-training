@@ -1,25 +1,13 @@
 export default class Category {
-  private readonly _id: number;
+  readonly id: string;
 
-  private _url: string;
+  url: string;
 
-  private _name: string;
+  name: string;
 
-  constructor(id: number, url: string, name: string) {
-    this._id = id;
-    this._url = url;
-    this._name = name;
-  }
-
-  get id() {
-    return this._id;
-  }
-
-  get url() {
-    return this._url;
-  }
-
-  get name() {
-    return this._name;
+  constructor(id: string, url: string, name: string) {
+    this.id = id;
+    this.url = url;
+    this.name = name;
   }
 }

@@ -68,7 +68,7 @@ export default class CommonService<T> {
   ) {
     this.connectToDb();
     const data = this.firebaseService.getDataFromProp(path, property, value);
-    const result = (await timeOutConnect(data)) as DataObject<T>;
+    const result = <DataObject<T>>await timeOutConnect(data);
 
     if (result && typeof result === 'object') {
       return convertDataObjectToModel(result);
@@ -98,7 +98,7 @@ export default class CommonService<T> {
 
   async getListDataFromProp(
     property: string,
-    value: string,
+    value: string | number,
     path: string = this.defaultPath,
   ): Promise<T[] | null> {
     this.connectToDb();
@@ -121,7 +121,7 @@ export default class CommonService<T> {
   }
 
   async deleteData(
-    id: number,
+    id: string,
     path = this.defaultPath,
   ): Promise<string | void> {
     this.connectToDb();

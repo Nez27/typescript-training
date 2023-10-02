@@ -21,7 +21,7 @@ export default class HomeController {
     return this.service.userService.getInfoUserLogin();
   }
 
-  handlerGetWalletByIdUser(idUser: number): Promise<Wallet | null> {
+  handlerGetWalletByIdUser(idUser: string): Promise<Wallet | null> {
     return this.service.walletService.getWalletByIdUser(idUser);
   }
 
@@ -37,11 +37,11 @@ export default class HomeController {
     return this.service.categoryService.getAllCategory();
   }
 
-  handlerGetAllTransactions(idUser: number): Promise<Transaction[] | null> {
+  handlerGetAllTransactions(idUser: string): Promise<Transaction[] | null> {
     return this.service.transactionService.getListTransactionByIdUser(idUser);
   }
 
-  handlerDeleteTransaction(idTransaction: number): Promise<void> {
+  handlerDeleteTransaction(idTransaction: string): Promise<void> {
     return this.service.transactionService.deleteTransaction(idTransaction);
   }
 

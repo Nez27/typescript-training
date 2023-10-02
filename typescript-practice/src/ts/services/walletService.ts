@@ -21,7 +21,7 @@ export default class WalletService extends CommonService<Wallet> {
    * @param {string} idUser The id user to find user's wallet
    * @returns {boolean} Return true if find, otherwise return false
    */
-  async isValidWallet(idUser: number): Promise<boolean> {
+  async isValidWallet(idUser: string): Promise<boolean> {
     const wallet = await this.getWalletByIdUser(idUser);
 
     return !!wallet;
@@ -32,11 +32,8 @@ export default class WalletService extends CommonService<Wallet> {
    * @param {string} email The id user to find user's wallet
    * @returns {Object || null} Return new Wallet Object if find, otherwise return null.
    */
-  async getWalletByIdUser(idUser: number): Promise<Wallet | null> {
-    const result = (await this.getDataFromProp(
-      'idUser',
-      idUser.toString(),
-    )) as Wallet;
+  async getWalletByIdUser(idUser: string): Promise<Wallet | null> {
+    const result = (await this.getDataFromProp('idUser', idUser)) as Wallet;
 
     return result || null;
   }

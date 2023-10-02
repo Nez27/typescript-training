@@ -29,7 +29,7 @@ export default class TransactionView {
 
   toggleLoaderSpinner: (() => void) | null = null;
 
-  deleteTransaction: ((idTransaction: number) => Promise<void>) | null = null;
+  deleteTransaction: ((idTransaction: string) => Promise<void>) | null = null;
 
   loadTransactionData: (() => Promise<void>) | null = null;
 
@@ -61,7 +61,7 @@ export default class TransactionView {
 
   initFunction(
     toggleLoaderSpinner: () => void,
-    deleteTransaction: (idTransaction: number) => Promise<void>,
+    deleteTransaction: (idTransaction: string) => Promise<void>,
     loadTransactionData: () => Promise<void>,
     updateAmountWallet: () => Promise<void>,
     loadData: () => Promise<void>,
@@ -165,7 +165,7 @@ export default class TransactionView {
           this.transactionDialog!.close();
           this.toggleLoaderSpinner!();
 
-          await this.deleteTransaction!(+idEl.value);
+          await this.deleteTransaction!(idEl.value);
 
           // Reload data
           await this.loadTransactionData!();
@@ -199,7 +199,7 @@ export default class TransactionView {
     );
   }
 
-  initValueTransactionDialog(idTransaction: number | null) {
+  initValueTransactionDialog(idTransaction: string | null) {
     let categoryName: string;
 
     if (idTransaction) {
@@ -281,12 +281,12 @@ export default class TransactionView {
         this.transactionDialog!.close();
 
         const transaction = new Transaction(
-          +idEl.value,
+          idEl.value,
           categoryNameEl.value,
           dateEl.value,
           noteEl.value,
           +amount,
-          +this.wallet!.idUser,
+          this.wallet!.idUser,
         );
 
         await this.saveTransaction!(transaction);
@@ -353,7 +353,7 @@ export default class TransactionView {
     this.transactionForm!.reset();
   }
 
-  showTransactionDialog(idTransaction: number | null = null) {
+  showTransactionDialog(idTransaction: string | null = null) {
     this.clearInputTransactionForm();
 
     // Init data transaction to dialog

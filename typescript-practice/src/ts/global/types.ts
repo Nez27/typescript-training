@@ -48,7 +48,7 @@ export interface Data {
 }
 
 export interface ItemTransaction {
-  id: number;
+  id: string;
   day: string;
   fullDateString: string;
   note: string;
