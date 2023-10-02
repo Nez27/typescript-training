@@ -77,7 +77,7 @@ export default class CommonService<T> {
     return null;
   }
 
-  async getAllDataFromPath(path = this.defaultPath): Promise<T | null> {
+  async getAllDataFromPath(path = this.defaultPath): Promise<T[] | null> {
     this.connectToDb();
 
     const results = await timeOutConnect(
@@ -90,7 +90,7 @@ export default class CommonService<T> {
         const tempData = data as DataObject<T>;
 
         return convertDataObjectToModel(tempData);
-      }) as T;
+      }) as T[];
     }
 
     return null;
@@ -100,7 +100,7 @@ export default class CommonService<T> {
     property: string,
     value: string,
     path: string = this.defaultPath,
-  ): Promise<T | null> {
+  ): Promise<T[] | null> {
     this.connectToDb();
 
     const results = await timeOutConnect(
@@ -114,7 +114,7 @@ export default class CommonService<T> {
         const tempData = data as DataObject<T>;
 
         return convertDataObjectToModel(tempData);
-      }) as T;
+      }) as T[];
     }
 
     return null;

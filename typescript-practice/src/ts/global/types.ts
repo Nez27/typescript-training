@@ -1,3 +1,5 @@
+import Category from 'models/category';
+import Transaction from 'models/transaction';
 import User from 'models/user';
 import Wallet from 'models/wallet';
 
@@ -13,7 +15,7 @@ export class DataObject<T> {
 
   constructor(dataObject: IDataObject<T>) {
     this.id = dataObject?.id ?? null;
-    this.data = dataObject.data as T;
+    this.data = <T>dataObject.data;
   }
 }
 
@@ -39,6 +41,16 @@ export type TSignal = {
 };
 
 export interface Data {
-  wallet: Wallet;
-  user: User;
+  wallet?: Wallet;
+  listTransactions?: Transaction[];
+  listCategories?: Category[];
+  user?: User;
+}
+
+export interface ItemTransaction {
+  id: number;
+  day: string;
+  fullDateString: string;
+  note: string;
+  amount: number;
 }

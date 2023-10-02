@@ -10,49 +10,79 @@ import User from 'models/user';
 import { Data, TError } from 'global/types';
 import { DEFAULT_TITLE_ERROR_TOAST } from 'constants/messages/dialog';
 import { redirectToLoginPage } from 'helpers/url';
+import Category from 'models/category';
+import CategoryView from './categoryView';
+import BudgetView from './budgetView';
+import TransactionView from './transactionView';
+import SummaryTabView from './summaryTabView';
+import TransactionDetail from 'models/transactionDetail';
+import TransactionTabView from './transactionTabView';
 
 export default class HomeView extends CommonView {
-  private _tabs: NodeListOf<Element>;
+  walletView: WalletView;
 
-  private _allContent: NodeListOf<Element>;
+  categoryView: CategoryView;
 
-  private _cancelBtns: NodeListOf<Element>;
+  budgetView: BudgetView;
 
-  private _dialogs: NodeListOf<Element>;
+  transactionView: TransactionView;
 
-  private _amountInputs: NodeListOf<Element>;
+  summaryTabView: SummaryTabView;
 
-  private _walletView: WalletView;
+  transactionTabView: TransactionTabView;
 
-  private _user: User | null = null;
+  tabs: NodeListOf<Element>;
 
-  private _wallet: Wallet | null = null;
+  allContent: NodeListOf<Element>;
 
-  private _getInfoUserLogin: (() => Promise<User | null>) | null = null;
+  cancelBtns: NodeListOf<Element>;
 
-  private _getWalletByIdUser:
-    | ((idUser: number) => Promise<Wallet | null>)
+  dialogs: NodeListOf<Element>;
+
+  amountInputs: NodeListOf<Element>;
+
+  user: User | null = null;
+
+  wallet: Wallet | null = null;
+
+  listTransactions: Transaction[] | null = null;
+
+  transactionDetails: TransactionDetail[] = [];
+
+  getInfoUserLogin: (() => Promise<User | null>) | null = null;
+
+  getWalletByIdUser: ((idUser: number) => Promise<Wallet | null>) | null = null;
+
+  getAllCategory: (() => Promise<Category[] | null>) | null = null;
+
+  getAllTransactions:
+    | ((idUser: number) => Promise<Transaction[] | null>)
     | null = null;
 
-  private _saveWallet: ((wallet: Wallet) => Promise<void>) | null = null;
+  deleteTransaction: ((idTransaction: number) => Promise<void>) | null = null;
 
-  private _saveTransaction:
-    | ((transaction: Transaction) => Promise<void>)
-    | null = null;
+  saveWallet: ((wallet: Wallet) => Promise<void>) | null = null;
 
-  private _transform: Transform | null = null;
+  saveTransaction: ((transaction: Transaction) => Promise<void>) | null = null;
+
+  transform: Transform | null = null;
 
   constructor() {
     super();
 
-    this._tabs = document.querySelectorAll('.app__tab-item');
-    this._allContent = document.querySelectorAll('.app__content-item');
-    this._cancelBtns = document.querySelectorAll('.form__cancel-btn');
-    this._dialogs = document.querySelectorAll('.dialog');
+    this.tabs = document.querySelectorAll('.app__tab-item');
+    this.allContent = document.querySelectorAll('.app__content-item');
+    this.cancelBtns = document.querySelectorAll('.form__cancel-btn');
+    this.dialogs = document.querySelectorAll('.dialog');
 
-    this._amountInputs = document.querySelectorAll('.form__input-balance');
+    this.amountInputs = document.querySelectorAll('.form__input-balance');
 
-    this._walletView = new WalletView();
+    this.walletView = new WalletView();
+    this.categoryView = new CategoryView();
+    this.budgetView = new BudgetView();
+    this.transactionView = new TransactionView(this.categoryView);
+    this.summaryTabView = new SummaryTabView();
+    this.transactionTabView = new TransactionTabView(this.transactionView);
 
     this.initToast();
     this.initLoader();
@@ -62,27 +92,78 @@ export default class HomeView extends CommonView {
   initFunction(
     getInfoUserLogin: () => Promise<User | null>,
     getWalletByIdUser: (idUser: number) => Promise<Wallet | null>,
+    getAllCategory: () => Promise<Category[] | null>,
+    getAllTransactions: (idUser: number) => Promise<Transaction[] | null>,
     saveWallet: (wallet: Wallet) => Promise<void>,
     saveTransaction: (transaction: Transaction) => Promise<void>,
+    deleteTransaction: (idTransaction: number) => Promise<void>,
     transform: Transform,
   ) {
-    this._getInfoUserLogin = getInfoUserLogin;
-    this._getWalletByIdUser = getWalletByIdUser;
-    this._saveWallet = saveWallet;
-    this._saveTransaction = saveTransaction;
+    this.getInfoUserLogin = getInfoUserLogin;
+    this.getWalletByIdUser = getWalletByIdUser;
+    this.getAllCategory = getAllCategory;
+    this.getAllTransactions = getAllTransactions;
+    this.saveWallet = saveWallet;
+    this.saveTransaction = saveTransaction;
+    this.deleteTransaction = deleteTransaction;
 
-    this._transform = transform;
+    this.transform = transform;
 
     // Init function for child view
     this.initWalletViewFunction();
+    this.initBudgetViewFunction();
+    this.initTransactionViewFunction();
+    this.initCategoryViewFunction();
+    this.initSummaryTabViewFunction();
+    this.initTransactionTabViewFunction();
+  }
+
+  initTransactionViewFunction() {
+    this.transactionView.initFunction(
+      this.toggleLoaderSpinner.bind(this),
+      this.deleteTransaction!,
+      this.loadTransactionData.bind(this),
+      this.updateAmountWallet.bind(this),
+      this.loadData.bind(this),
+      this.showSuccessToast.bind(this),
+      this.showErrorToast.bind(this),
+      this.saveTransaction!,
+      this.transform,
+    );
+  }
+
+  initBudgetViewFunction() {
+    this.budgetView.initFunction(
+      this.showErrorToast.bind(this),
+      this.showSuccessToast.bind(this),
+      this.toggleLoaderSpinner.bind(this),
+      this.saveTransaction!.bind(this),
+      this.loadTransactionData.bind(this),
+      this.updateAmountWallet.bind(this),
+      this.loadData.bind(this),
+      this.transform,
+    );
+  }
+
+  initCategoryViewFunction() {
+    this.categoryView.initFunction(this.getAllCategory!, this.transform!);
+  }
+
+  initSummaryTabViewFunction() {
+    this.summaryTabView.initFunction(this.transform!);
+  }
+
+  initTransactionTabViewFunction() {
+    this.transactionTabView.initFunction(this.transform!);
   }
 
   initWalletViewFunction() {
-    this._walletView.initFunction(
-      this._transform,
+    this.walletView.initFunction(
+      this.transform,
       this.toggleLoaderSpinner.bind(this),
-      this._saveWallet,
-      this._saveTransaction,
+      this.saveWallet,
+      this.saveTransaction,
+      this.loadTransactionData.bind(this),
       this.loadData.bind(this),
       this.loadEvent.bind(this),
       this.showSuccessToast.bind(this),
@@ -92,19 +173,29 @@ export default class HomeView extends CommonView {
 
   subscribeListenerData() {
     this.subscribe();
-    this._walletView.subscribe();
+    this.transactionView.subscribe();
+    this.budgetView.subscribe();
+    this.summaryTabView.subscribe();
+    this.transactionTabView.subscribe();
+    this.walletView.subscribe();
   }
 
   async loadData() {
     // Send data to other class
     this.sendData();
 
+    await this.categoryView.loadCategory();
+
     await this.loadWalletUser();
+
+    this.summaryTabView.load();
+
+    this.transactionTabView.loadTransactionTab();
   }
 
   async loadPage() {
     this.toggleLoaderSpinner();
-    const user = await this._getInfoUserLogin!();
+    const user = await this.getInfoUserLogin!();
 
     if (!user) {
       // If user not login yet
@@ -112,16 +203,17 @@ export default class HomeView extends CommonView {
       window.location.replace('/login');
     } else {
       // If user already login
-      this._user = user;
-      this._wallet = await this._getWalletByIdUser!(user.id);
+      this.user = user;
+      this.wallet = await this.getWalletByIdUser!(user.id);
 
       this.sendData();
       // Check user's wallet if have or not
-      if (!this._wallet) {
+      if (!this.wallet) {
         // Show add wallet dialog
-        this._walletView.showDialog();
+        this.walletView.showDialog();
       } else {
         // Init data
+        await this.loadTransactionData();
         await this.loadData();
 
         // Load event page
@@ -135,31 +227,32 @@ export default class HomeView extends CommonView {
   // ---------------------LOAD DATA---------------------//
 
   subscribe() {
-    this._transform!.create('homeView', this.updateData.bind(this));
+    this.transform!.create('homeView', this.updateData.bind(this));
   }
 
   sendData() {
     const data: Data = {
-      wallet: this._wallet!,
-      user: this._user!,
+      wallet: this.wallet!,
+      listTransactions: this.listTransactions!,
+      user: this.user!,
     };
 
-    this._transform!.onSendSignal('homeView', data);
+    this.transform!.onSendSignal('homeView', data);
   }
 
   updateData(data: Data) {
-    if (data.wallet) this._wallet = data.wallet;
+    if (data.wallet) this.wallet = data.wallet;
 
-    if (data.user) this._user = data.user;
+    if (data.user) this.user = data.user;
   }
 
   /**
    * Load wallet user
    */
   async loadWalletUser() {
-    const wallet = this._wallet
-      ? this._wallet
-      : await this._getWalletByIdUser!(this._user!.id);
+    const wallet = this.wallet
+      ? this.wallet
+      : await this.getWalletByIdUser!(this.user!.id);
     const walletName = document.querySelector('.wallet__name');
     const walletPrice = document.querySelector('.wallet__price');
     const walletNameValue = wallet!.walletName;
@@ -167,7 +260,7 @@ export default class HomeView extends CommonView {
 
     const sign = walletAmountValue >= 0 ? '+' : '-';
 
-    this._wallet = wallet; // Make wallet into global variable
+    this.wallet = wallet; // Make wallet into global variable
 
     walletName!.textContent = walletNameValue;
     walletPrice!.textContent = `${sign}$ ${formatNumber(
@@ -175,11 +268,38 @@ export default class HomeView extends CommonView {
     )}`; // Math.abs(walletAmountValue) to keep the value always > 0
 
     // Update amount wallet into database
-    this._saveWallet!(this._wallet!);
+    this.saveWallet!(this.wallet!);
   }
 
-  // ---------------------END---------------------//
+  async loadTransactionData() {
+    this.listTransactions = await this.getAllTransactions!(this.wallet!.idUser);
 
+    this.sendData();
+  }
+
+  async updateAmountWallet() {
+    let inflow = 0;
+    let outflow = 0;
+    // Init data first
+    this.transactionDetails =
+      this.transactionTabView!.loadTransactionDetailsData();
+
+    this.transactionDetails.forEach((transaction) => {
+      if (transaction.totalAmount >= 0) {
+        inflow += transaction.totalAmount;
+      } else {
+        outflow -= transaction.totalAmount;
+      }
+    });
+    // Reassign value for wallet user;
+    this.wallet!.inflow = inflow;
+    this.wallet!.outflow = -outflow;
+    await this.saveWallet!(this.wallet!);
+  }
+
+  // ---------------------END--------------------- //
+
+  // ---------------------TOAST--------------------- //
   showSuccessToast(title: string, message: string) {
     const typeToast = TypeToast.success;
     const btnContent = BTN_CONTENT.OK;
@@ -214,8 +334,9 @@ export default class HomeView extends CommonView {
       this.toastBtn.removeEventListener('click', redirectToLoginPage);
     }
   }
+  // ---------------------END--------------------- //
 
-  // ------------------------------- HANDLER EVENT ------------------------------- //
+  // --------------------- HANDLER EVENT --------------------- //
 
   loadEvent() {
     this.addCommonEventPage();
@@ -226,7 +347,7 @@ export default class HomeView extends CommonView {
    * Handle event when click on tabs
    */
   handlerTabsTransfer() {
-    this._tabs.forEach((tab, index) => {
+    this.tabs.forEach((tab, index) => {
       tab.addEventListener('click', (e: Event) => {
         this.removeActiveTab();
         tab.classList.add('active');
@@ -240,17 +361,17 @@ export default class HomeView extends CommonView {
         line.style.width = `${eventTarget.offsetWidth}px`;
         line.style.left = `${eventTarget.offsetLeft}px`;
 
-        this._allContent.forEach((content) => {
+        this.allContent.forEach((content) => {
           content.classList.remove('active');
         });
-        this._allContent[index].classList.add('active');
+        this.allContent[index].classList.add('active');
       });
     });
   }
 
   addCommonEventPage() {
     // Add event close dialog when click outside
-    this._dialogs.forEach((dialog) => {
+    this.dialogs.forEach((dialog) => {
       dialog.addEventListener('click', (e) => {
         const dialogDimensions = dialog.getBoundingClientRect();
         const mouseEvent = e as MouseEvent;
@@ -265,14 +386,14 @@ export default class HomeView extends CommonView {
       });
     });
 
-    this._cancelBtns.forEach((btn) => {
+    this.cancelBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         this.closeAllDialog();
       });
     });
 
     // Prevent input =,-,e into amount input
-    this._amountInputs.forEach((item) => {
+    this.amountInputs.forEach((item) => {
       item.addEventListener(
         'keypress',
         (e) =>
@@ -298,13 +419,13 @@ export default class HomeView extends CommonView {
   }
 
   closeAllDialog() {
-    this._dialogs.forEach((dialog) => {
+    this.dialogs.forEach((dialog) => {
       (<HTMLDialogElement>dialog).close();
     });
   }
 
   removeActiveTab() {
-    this._tabs.forEach((tab) => {
+    this.tabs.forEach((tab) => {
       tab.classList.remove('active');
     });
   }

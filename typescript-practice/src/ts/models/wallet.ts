@@ -1,15 +1,15 @@
 import { generateId } from '../helpers/data';
 
 export default class Wallet {
-  private readonly _id: number;
+  id: number;
 
-  private _walletName: string;
+  walletName: string;
 
-  private _inflow: number;
+  inflow: number;
 
-  private _outflow: number;
+  outflow: number;
 
-  private _idUser: number;
+  idUser: number;
 
   constructor(
     walletName: string,
@@ -17,44 +17,10 @@ export default class Wallet {
     outflow: number,
     idUser: number,
   ) {
-    this._id = generateId();
-    this._walletName = walletName;
-    this._inflow = inflow;
-    this._outflow = outflow;
-    this._idUser = idUser;
-  }
-
-  get id() {
-    return this._id;
-  }
-
-  get walletName() {
-    return this._walletName;
-  }
-
-  get inflow() {
-    return this._inflow;
-  }
-
-  get outflow() {
-    return this._outflow;
-  }
-
-  get idUser() {
-    return this._idUser;
-  }
-
-  get amountWallet() {
-    return this._inflow + this._outflow;
-  }
-
-  get toObject() {
-    return {
-      id: this._id,
-      walletName: this._walletName,
-      inflow: this._inflow,
-      outflow: this._outflow,
-      idUser: this._idUser,
-    };
+    this.id = generateId();
+    this.walletName = walletName;
+    this.inflow = inflow;
+    this.outflow = outflow;
+    this.idUser = idUser;
   }
 }

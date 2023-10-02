@@ -18,7 +18,7 @@ export default class TransactionService extends CommonService<Transaction> {
 
   async getListTransactionByIdUser(
     idUser: number,
-  ): Promise<Transaction | null> {
+  ): Promise<Transaction[] | null> {
     const results = this.getListDataFromProp(
       'idUser',
       idUser.toString(),

@@ -20,6 +20,8 @@ export default class WalletView {
     | ((transaction: Transaction) => Promise<void>)
     | null = null;
 
+  private _loadTransactionData: (() => Promise<void>) | null = null;
+
   private _loadData: (() => Promise<void>) | null = null;
 
   private _loadEvent: (() => void) | null = null;
@@ -46,6 +48,7 @@ export default class WalletView {
     toggleLoaderSpinner: () => void,
     saveWallet: ((wallet: Wallet) => Promise<void>) | null,
     saveTransaction: ((transaction: Transaction) => Promise<void>) | null,
+    loadTransactionData: () => Promise<void>,
     loadData: () => Promise<void>,
     loadEvent: () => void,
     showSuccessToast: (title: string, message: string) => void,
@@ -55,6 +58,7 @@ export default class WalletView {
     this._toggleLoaderSpinner = toggleLoaderSpinner;
     this._saveWallet = saveWallet;
     this._saveTransaction = saveTransaction;
+    this._loadTransactionData = loadTransactionData;
     this._loadData = loadData;
     this._loadEvent = loadEvent;
     this._showSuccessToast = showSuccessToast;
@@ -127,8 +131,7 @@ export default class WalletView {
         this._walletDialog!.close();
         this._toggleLoaderSpinner!();
 
-        const wallet = new Wallet(walletName, +amount, 0, this._user!.id)
-          .toObject as Wallet;
+        const wallet = new Wallet(walletName, +amount, 0, this._user!.id);
         this._wallet = wallet;
 
         this.sendData();
@@ -136,17 +139,20 @@ export default class WalletView {
         await this._saveWallet!(wallet);
         // Transaction info
         const transaction = new Transaction(
+          0,
           'Income',
           new Date().toISOString().slice(0, 10),
           FIRST_ADD_WALLET_NOTE,
           +amount,
           this._user!.id,
-        ).toObject;
+        );
 
         await this._saveTransaction!(transaction);
         // Load data and event
+        await this._loadTransactionData!();
         await this._loadData!();
         this._loadEvent!();
+
         this._showSuccessToast!(ADD_WALLET_SUCCESS, DEFAULT_MESSAGE);
 
         this._toggleLoaderSpinner!();

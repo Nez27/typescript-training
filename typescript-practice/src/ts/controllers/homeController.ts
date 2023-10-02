@@ -4,6 +4,7 @@ import Service from 'services';
 import View from 'views';
 import Wallet from 'models/wallet';
 import Transaction from 'models/transaction';
+import Category from 'models/category';
 
 export default class HomeController {
   public homeView: HomeView | null = null;
@@ -20,16 +21,28 @@ export default class HomeController {
     return this.service.userService.getInfoUserLogin();
   }
 
-  handlerGetWalletByIdUser(idUser: number) {
+  handlerGetWalletByIdUser(idUser: number): Promise<Wallet | null> {
     return this.service.walletService.getWalletByIdUser(idUser);
   }
 
-  handlerSaveWallet(wallet: Wallet) {
+  handlerSaveWallet(wallet: Wallet): Promise<void> {
     return this.service.walletService.saveWallet(wallet);
   }
 
-  handlerSaveTransaction(transaction: Transaction) {
+  handlerSaveTransaction(transaction: Transaction): Promise<void> {
     return this.service.transactionService.saveTransaction(transaction);
+  }
+
+  handlerGetAllCategory(): Promise<Category[] | null> {
+    return this.service.categoryService.getAllCategory();
+  }
+
+  handlerGetAllTransactions(idUser: number): Promise<Transaction[] | null> {
+    return this.service.transactionService.getListTransactionByIdUser(idUser);
+  }
+
+  handlerDeleteTransaction(idTransaction: number): Promise<void> {
+    return this.service.transactionService.deleteTransaction(idTransaction);
   }
 
   init() {
@@ -37,8 +50,11 @@ export default class HomeController {
       this.homeView.initFunction(
         this.handlerGetInfoUserLogin.bind(this),
         this.handlerGetWalletByIdUser.bind(this),
+        this.handlerGetAllCategory.bind(this),
+        this.handlerGetAllTransactions.bind(this),
         this.handlerSaveWallet.bind(this),
         this.handlerSaveTransaction.bind(this),
+        this.handlerDeleteTransaction.bind(this),
         new Transform(),
       );
 
