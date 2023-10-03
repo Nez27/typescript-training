@@ -35,7 +35,7 @@ export class CustomError extends Error {
   }
 }
 
-export interface Data {
+export interface DataTransfer {
   wallet?: Wallet;
   listTransactions?: Transaction[];
   listCategories?: Category[];

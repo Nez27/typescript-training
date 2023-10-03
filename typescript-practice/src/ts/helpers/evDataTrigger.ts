@@ -1,9 +1,9 @@
-import { Data } from 'global/types';
+import { DataTransfer } from 'global/types';
 
 type TSignal = {
   [key: string]: {
     name: string;
-    handler: (value: Data) => void;
+    handler: (value: DataTransfer) => void;
   };
 };
 
@@ -20,7 +20,7 @@ export default class EventDataTrigger {
     return this._instance || (this._instance = new this());
   }
 
-  onSendSignal(fromClass: string, value: Data) {
+  onSendSignal(fromClass: string, value: DataTransfer) {
     Object.keys(this.signal).forEach((key) => {
       const item = this.signal[key as keyof TSignal];
 
@@ -39,7 +39,7 @@ export default class EventDataTrigger {
 
   create(
     className: string,
-    handler: ((value: Data) => void) | null = null,
+    handler: ((value: DataTransfer) => void) | null = null,
   ): void {
     if (handler) this.signal[className] = { name: className, handler };
   }

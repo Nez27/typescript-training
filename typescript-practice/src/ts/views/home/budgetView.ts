@@ -7,7 +7,7 @@ import { DEFAULT_CATEGORY } from 'constants/config';
 import { TOAST } from 'constants/messages';
 import {
   IBudgetViewFunc,
-  Data,
+  DataTransfer,
   Nullable,
   PromiseVoid,
   TError,
@@ -70,7 +70,7 @@ export default class BudgetView {
     this.evDataTrigger!.onSendSignal('budgetView', data);
   }
 
-  updateData(data: Data) {
+  updateData(data: DataTransfer) {
     if (data.wallet) this.wallet = data.wallet;
 
     if (data.user) this.user = data.user;

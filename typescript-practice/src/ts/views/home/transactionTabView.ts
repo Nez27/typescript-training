@@ -6,7 +6,7 @@ import {
 } from '../../helpers/data';
 import { formatNumber } from '../../helpers/data';
 import TransactionView from './transactionView';
-import { Data, Nullable } from 'global/types';
+import { DataTransfer, Nullable } from 'global/types';
 import Wallet from 'models/wallet';
 import Transaction from 'models/transaction';
 import Category from 'models/category';
@@ -41,7 +41,7 @@ export default class TransactionTabView {
     );
   }
 
-  updateData(data: Data) {
+  updateData(data: DataTransfer) {
     if (data.wallet) this.wallet = data.wallet;
 
     if (data.listTransactions) this.listTransactions = data.listTransactions;

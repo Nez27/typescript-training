@@ -8,7 +8,7 @@ import EventDataTrigger from 'helpers/evDataTrigger';
 import Transaction from 'models/transaction';
 import User from 'models/user';
 import {
-  Data,
+  DataTransfer,
   IBudgetViewFunc,
   IHomeFunc,
   ITransactionViewFunc,
@@ -236,7 +236,7 @@ export default class HomeView extends CommonView {
   }
 
   sendData() {
-    const data: Data = {
+    const data: DataTransfer = {
       wallet: this.wallet!,
       listTransactions: this.listTransactions!,
       user: this.user!,
@@ -245,7 +245,7 @@ export default class HomeView extends CommonView {
     this.evDataTrigger!.onSendSignal('homeView', data);
   }
 
-  updateData(data: Data) {
+  updateData(data: DataTransfer) {
     if (data.wallet) this.wallet = data.wallet;
 
     if (data.user) this.user = data.user;

@@ -1,6 +1,6 @@
 import EventDataTrigger from 'helpers/evDataTrigger';
 import { formatNumber } from '../../helpers/data';
-import { Data, Nullable } from 'global/types';
+import { DataTransfer, Nullable } from 'global/types';
 import Wallet from 'models/wallet';
 import Transaction from 'models/transaction';
 import Category from 'models/category';
@@ -22,7 +22,7 @@ export default class SummaryTabView {
     this.evDataTrigger!.create('summaryTabView', this.updateData.bind(this));
   }
 
-  updateData(data: Data) {
+  updateData(data: DataTransfer) {
     if (data.wallet) this.wallet = data.wallet;
 
     if (data.listTransactions) this.listTransactions = data.listTransactions;

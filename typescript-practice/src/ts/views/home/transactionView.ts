@@ -3,7 +3,7 @@ import defaultCategoryIcon from '../../../assets/images/question-icon.svg';
 import CategoryView from './categoryView';
 import EventDataTrigger from 'helpers/evDataTrigger';
 import {
-  Data,
+  DataTransfer,
   ITransactionViewFunc,
   Nullable,
   PromiseVoid,
@@ -80,7 +80,7 @@ export default class TransactionView {
   }
 
   sendData() {
-    const data: Data = {
+    const data: DataTransfer = {
       wallet: this.wallet!,
       listTransactions: this.listTransactions!,
     };
@@ -88,7 +88,7 @@ export default class TransactionView {
     this.evDataTrigger!.onSendSignal('transactionView', data);
   }
 
-  updateData(data: Data) {
+  updateData(data: DataTransfer) {
     if (data.wallet) this.wallet = data.wallet;
 
     if (data.listTransactions) this.listTransactions = data.listTransactions;

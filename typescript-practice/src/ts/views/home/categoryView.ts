@@ -1,7 +1,7 @@
 import EventDataTrigger from 'helpers/evDataTrigger';
 import { REMOVE_CATEGORY } from '../../constants/config';
 import Category from 'models/category';
-import { Data, Nullable, PromiseOrNull } from 'global/types';
+import { DataTransfer, Nullable, PromiseOrNull } from 'global/types';
 
 export default class CategoryView {
   categoryDialog: Nullable<HTMLDialogElement> = null;
@@ -40,7 +40,7 @@ export default class CategoryView {
   }
 
   sendData() {
-    const data: Data = { listCategories: this.listCategory! };
+    const data: DataTransfer = { listCategories: this.listCategory! };
 
     this.evDataTrigger!.onSendSignal('categoryView', data);
   }

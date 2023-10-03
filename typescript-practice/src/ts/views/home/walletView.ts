@@ -3,7 +3,7 @@ import Wallet from '../../models/wallet';
 import { renderRequiredText } from '../../helpers/validatorForm';
 import EventDataTrigger from 'helpers/evDataTrigger';
 import {
-  Data,
+  DataTransfer,
   IWalletViewFunc,
   Nullable,
   PromiseVoid,
@@ -73,7 +73,7 @@ export default class WalletView {
     this.evDataTrigger!.onSendSignal('walletView', data);
   }
 
-  updateData(data: Data) {
+  updateData(data: DataTransfer) {
     if (data.wallet) this.wallet = data.wallet;
 
     if (data.user) this.user = data.user;
