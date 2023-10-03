@@ -1,17 +1,15 @@
+import { Nullable } from 'global/types';
 import User from 'models/user';
 import Service from 'services';
-import View from 'views';
 import LoginView from 'views/loginView';
 
 export default class LoginController {
-  public loginView: LoginView | null = null;
-
   constructor(
     public service: Service,
-    public view: View,
+    public loginView: Nullable<LoginView>,
   ) {
     this.service = service;
-    this.loginView = view.loginView;
+    this.loginView = loginView;
   }
 
   handlerLoginUser(email: string, password: string): Promise<boolean> {

@@ -2,12 +2,7 @@ import { TypeToast, BTN_CONTENT } from '../constants/config';
 import AuthenticationView from './authenticationView';
 import User from '../models/user';
 import { redirectToLoginPage } from '../helpers/url';
-import {
-  DEFAULT_MESSAGE,
-  DEFAULT_TITLE_ERROR_TOAST,
-  REGISTER_SUCCESS,
-  USER_EXIST_ERROR,
-} from 'constants/messages';
+import { TOAST } from 'constants/messages';
 import { Nullable, PromiseOrNull, TError } from 'global/types';
 
 interface UserInput {
@@ -95,8 +90,8 @@ export default class RegisterView extends AuthenticationView {
    */
   showRegisterSuccessToast() {
     const typeToast = TypeToast.success;
-    const title = REGISTER_SUCCESS;
-    const content = DEFAULT_MESSAGE;
+    const title = TOAST.REGISTER_SUCCESS;
+    const content = TOAST.DEFAULT_MESSAGE;
     const btnContent = BTN_CONTENT.OK;
 
     this.initToastContent(typeToast, title, content, btnContent);
@@ -117,7 +112,7 @@ export default class RegisterView extends AuthenticationView {
     const title =
       typeof error === 'object' && error.title
         ? error.title
-        : DEFAULT_TITLE_ERROR_TOAST;
+        : TOAST.DEFAULT_TITLE_ERROR_TOAST;
 
     const content =
       typeof error === 'object' && error.message
@@ -168,7 +163,7 @@ export default class RegisterView extends AuthenticationView {
         // Check user exist
         const userExist = await checkExistUser(user.email);
         if (userExist) {
-          throw Error(USER_EXIST_ERROR);
+          throw Error(TOAST.USER_EXIST_ERROR);
         } else {
           await saveUser(user);
           // Show toast success

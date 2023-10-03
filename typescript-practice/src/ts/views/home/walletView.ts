@@ -12,7 +12,7 @@ import {
 } from 'global/types';
 import User from 'models/user';
 import { FIRST_ADD_WALLET_NOTE } from 'constants/defaultVariable';
-import { ADD_WALLET_SUCCESS, DEFAULT_MESSAGE } from 'constants/messages';
+import { TOAST } from 'constants/messages';
 
 export default class WalletView {
   walletDialog: Nullable<HTMLDialogElement> = null;
@@ -148,7 +148,7 @@ export default class WalletView {
         await this.loadData!();
         this.loadEvent!();
 
-        this.showSuccessToast!(ADD_WALLET_SUCCESS, DEFAULT_MESSAGE);
+        this.showSuccessToast!(TOAST.ADD_WALLET_SUCCESS, TOAST.DEFAULT_MESSAGE);
 
         this.toggleLoaderSpinner!();
       }
@@ -180,7 +180,6 @@ export default class WalletView {
     return true;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   changeBtnStyleWalletDialog(bodyDialog: Element) {
     const walletName = (<HTMLDataElement>(
       bodyDialog.querySelector('.form__input-text')

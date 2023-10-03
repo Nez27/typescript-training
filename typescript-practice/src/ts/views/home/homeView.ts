@@ -17,7 +17,7 @@ import {
   PromiseOrNull,
   TError,
 } from 'global/types';
-import { DEFAULT_TITLE_ERROR_TOAST } from 'constants/messages';
+import { TOAST } from 'constants/messages';
 import { redirectToLoginPage } from 'helpers/url';
 import Category from 'models/category';
 import CategoryView from './categoryView';
@@ -191,13 +191,10 @@ export default class HomeView extends CommonView {
     this.sendData();
 
     await this.categoryView.loadCategory();
-
-    await this.loadWalletUser();
-
     this.summaryTabView.load();
-
     this.transactionTabView.loadTransactionTab();
 
+    await this.loadWalletUser();
     await this.updateAmountWallet();
   }
 
@@ -327,7 +324,7 @@ export default class HomeView extends CommonView {
     const title =
       typeof error === 'object' && error.title
         ? error.title
-        : DEFAULT_TITLE_ERROR_TOAST;
+        : TOAST.DEFAULT_TITLE_ERROR_TOAST;
 
     const content =
       typeof error === 'object' && error.message

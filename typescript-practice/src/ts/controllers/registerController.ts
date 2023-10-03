@@ -1,17 +1,15 @@
+import { Nullable } from 'global/types';
 import User from 'models/user';
 import Service from 'services';
-import View from 'views';
 import RegisterView from 'views/registerView';
 
 export default class RegisterController {
-  public registerView: RegisterView | null = null;
-
   constructor(
     public service: Service,
-    public view: View,
+    public registerView: Nullable<RegisterView>,
   ) {
     this.service = service;
-    this.registerView = view.registerView;
+    this.registerView = registerView;
   }
 
   handlerCheckUserValid(email: string): Promise<boolean> {

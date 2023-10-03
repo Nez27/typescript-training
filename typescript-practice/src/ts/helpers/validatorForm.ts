@@ -1,5 +1,5 @@
 import { REGEX } from '../constants/config';
-import { REQUIRED_MESSAGE } from '../constants/messages';
+import { VALIDATE_FORM } from '../constants/messages';
 
 /**
  * Validate password
@@ -23,7 +23,7 @@ export const compare2Password = (
 
 export const renderRequiredText = (field: string, element: Element) => {
   const markup: string = `
-    <p class="error-text">${REQUIRED_MESSAGE(field)}</p>
+    <p class="error-text">${VALIDATE_FORM.REQUIRED_MESSAGE(field)}</p>
   `;
 
   element.insertAdjacentHTML('afterend', markup);

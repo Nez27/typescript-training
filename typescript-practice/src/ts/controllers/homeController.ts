@@ -1,20 +1,17 @@
 import HomeView from 'views/home/homeView';
 import Service from 'services';
-import View from 'views';
 import Wallet from 'models/wallet';
 import Transaction from 'models/transaction';
 import Category from 'models/category';
-import { IHomeFunc } from 'global/types';
+import { IHomeFunc, Nullable } from 'global/types';
 
 export default class HomeController {
-  public homeView: HomeView | null = null;
-
   constructor(
     public service: Service,
-    public view: View,
+    public homeView: Nullable<HomeView>,
   ) {
     this.service = service;
-    this.homeView = view.homeView;
+    this.homeView = homeView;
   }
 
   handlerGetInfoUserLogin() {

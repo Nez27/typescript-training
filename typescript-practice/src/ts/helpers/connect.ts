@@ -1,4 +1,4 @@
-import { TIME_OUT_ERROR } from '../constants/messages';
+import { TOAST } from '../constants/messages';
 import { TIME_OUT_SEC } from '../constants/config';
 import FirebaseService from '../services/firebaseService';
 
@@ -11,7 +11,7 @@ export const timeout = (s: number): Promise<string> => {
   return new Promise((_, reject) => {
     setTimeout(() => {
       FirebaseService.disconnect();
-      reject(TIME_OUT_ERROR);
+      reject(TOAST.TIME_OUT_ERROR);
     }, s * 1000);
   });
 };

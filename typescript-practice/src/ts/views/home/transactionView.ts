@@ -12,11 +12,7 @@ import {
 } from 'global/types';
 import Wallet from 'models/wallet';
 import Category from 'models/category';
-import {
-  ADD_TRANSACTION_SUCCESS,
-  DEFAULT_MESSAGE,
-  UPDATE_TRANSACTION_SUCCESS,
-} from 'constants/messages';
+import { TOAST } from 'constants/messages';
 import { renderRequiredText } from 'helpers/validatorForm';
 
 export default class TransactionView {
@@ -170,7 +166,7 @@ export default class TransactionView {
           await this.updateAmountWallet!();
           await this.loadData!();
 
-          this.showSuccessToast!('Delete success!', DEFAULT_MESSAGE);
+          this.showSuccessToast!('Delete success!', TOAST.DEFAULT_MESSAGE);
         } catch (error) {
           this.showErrorToast!(error as TError);
         }
@@ -296,10 +292,16 @@ export default class TransactionView {
 
         if (!idEl.value) {
           // Add success
-          this.showSuccessToast!(ADD_TRANSACTION_SUCCESS, DEFAULT_MESSAGE);
+          this.showSuccessToast!(
+            TOAST.ADD_TRANSACTION_SUCCESS,
+            TOAST.DEFAULT_MESSAGE,
+          );
         } else {
           // Update success
-          this.showSuccessToast!(UPDATE_TRANSACTION_SUCCESS, DEFAULT_MESSAGE);
+          this.showSuccessToast!(
+            TOAST.UPDATE_TRANSACTION_SUCCESS,
+            TOAST.DEFAULT_MESSAGE,
+          );
         }
 
         this.toggleLoaderSpinner!();

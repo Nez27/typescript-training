@@ -15,8 +15,11 @@ export default class Controller {
     public service: Service,
     public view: View,
   ) {
-    this.registerController = new RegisterController(service, view);
-    this.loginController = new LoginController(service, view);
-    this.homeController = new HomeController(service, view);
+    this.registerController = new RegisterController(
+      service,
+      view.registerView,
+    );
+    this.loginController = new LoginController(service, view.loginView);
+    this.homeController = new HomeController(service, view.homeView);
   }
 }

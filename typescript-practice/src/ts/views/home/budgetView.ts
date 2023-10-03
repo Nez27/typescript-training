@@ -4,7 +4,7 @@ import EventDataTrigger from 'helpers/evDataTrigger';
 import Wallet from 'models/wallet';
 import User from 'models/user';
 import { DEFAULT_CATEGORY } from 'constants/config';
-import { ADD_TRANSACTION_SUCCESS, DEFAULT_MESSAGE } from 'constants/messages';
+import { TOAST } from 'constants/messages';
 import {
   IBudgetViewFunc,
   Data,
@@ -140,7 +140,10 @@ export default class BudgetView {
         this.toggleLoaderSpinner!();
 
         // Show success message
-        this.showSuccessToast!(ADD_TRANSACTION_SUCCESS, DEFAULT_MESSAGE);
+        this.showSuccessToast!(
+          TOAST.ADD_TRANSACTION_SUCCESS,
+          TOAST.DEFAULT_MESSAGE,
+        );
 
         (<HTMLFormElement>document.getElementById('formAddBudget')!).reset();
       }

@@ -1,10 +1,5 @@
 import CommonView from './commonView';
-import {
-  INVALID_EMAIL_FORMAT,
-  PASSWORD_NOT_MATCH,
-  PASSWORD_NOT_STRONG,
-  ERROR_MESSAGE_DEFAULT,
-} from 'constants/messages';
+import { TOAST, VALIDATE_FORM } from 'constants/messages';
 import {
   compare2Password,
   isValidPassword,
@@ -31,7 +26,7 @@ export default class AuthenticationView extends CommonView {
 
     this.formEl = document.querySelector('.form');
     this.emailEl = document.querySelector("[name='email']");
-    this.messageDefault = ERROR_MESSAGE_DEFAULT;
+    this.messageDefault = TOAST.ERROR_MESSAGE_DEFAULT;
     this.inputPasswordEl = document.querySelector('input[name="password"]');
     this.inputPasswordConfirmEl = document.querySelector(
       'input[name="password_confirm"]',
@@ -44,7 +39,7 @@ export default class AuthenticationView extends CommonView {
   validateEmail(email: string): boolean {
     if (email) {
       if (!isValidateEmail(email)) {
-        this.listError.push(INVALID_EMAIL_FORMAT);
+        this.listError.push(VALIDATE_FORM.INVALID_EMAIL_FORMAT);
 
         return false;
       }
@@ -58,7 +53,7 @@ export default class AuthenticationView extends CommonView {
   validatePassword(password: string): boolean {
     if (password) {
       if (!isValidPassword(password)) {
-        this.listError.push(PASSWORD_NOT_STRONG);
+        this.listError.push(VALIDATE_FORM.PASSWORD_NOT_STRONG);
 
         return false;
       }
@@ -74,7 +69,7 @@ export default class AuthenticationView extends CommonView {
   validatePasswordConfirm(password: string, passwordConfirm: string): boolean {
     if (passwordConfirm) {
       if (!compare2Password(password, passwordConfirm)) {
-        this.listError.push(PASSWORD_NOT_MATCH);
+        this.listError.push(VALIDATE_FORM.PASSWORD_NOT_MATCH);
 
         return false;
       }

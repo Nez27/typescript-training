@@ -1,10 +1,7 @@
 import AuthenticationView from './authenticationView';
 import { TypeToast, BTN_CONTENT } from '../constants/config';
 import User from 'models/user';
-import {
-  DEFAULT_TITLE_ERROR_TOAST,
-  ERROR_CREDENTIAL,
-} from 'constants/messages';
+import { TOAST, VALIDATE_FORM } from 'constants/messages';
 import { CustomError, Nullable, PromiseOrNull, TError } from 'global/types';
 import { redirectToLoginPage } from 'helpers/url';
 
@@ -34,7 +31,7 @@ export default class LoginView extends AuthenticationView {
     const title =
       typeof error === 'object' && error.title
         ? error.title
-        : DEFAULT_TITLE_ERROR_TOAST;
+        : TOAST.DEFAULT_TITLE_ERROR_TOAST;
 
     const content =
       typeof error === 'object' && error.message
@@ -88,7 +85,10 @@ export default class LoginView extends AuthenticationView {
           window.location.replace('/');
           return;
         }
-        throw new CustomError(ERROR_CREDENTIAL.title, ERROR_CREDENTIAL.message);
+        throw new CustomError(
+          VALIDATE_FORM.ERROR_CREDENTIAL.title,
+          VALIDATE_FORM.ERROR_CREDENTIAL.message,
+        );
       }
     } catch (error) {
       // Show toast error
