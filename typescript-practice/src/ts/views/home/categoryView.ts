@@ -1,20 +1,20 @@
-import Transform from 'helpers/transform';
+import EventDataTrigger from 'helpers/evDataTrigger';
 import { REMOVE_CATEGORY } from '../../constants/config';
 import Category from 'models/category';
-import { Data } from 'global/types';
+import { Data, Nullable, PromiseOrNull } from 'global/types';
 
 export default class CategoryView {
-  categoryDialog: HTMLDialogElement | null = null;
+  categoryDialog: Nullable<HTMLDialogElement> = null;
 
-  categoryField: HTMLElement | null = null;
+  categoryField: Nullable<HTMLElement> = null;
 
-  closeIcon: HTMLElement | null = null;
+  closeIcon: Nullable<HTMLElement> = null;
 
-  getAllCategory: (() => Promise<Category[] | null>) | null = null;
+  getAllCategory: Nullable<PromiseOrNull<Category[]>> = null;
 
-  transform: Transform | null = null;
+  evDataTrigger: Nullable<EventDataTrigger> = null;
 
-  listCategory: Category[] | null = null;
+  listCategory: Nullable<Category[]> = null;
 
   categorySelected: string;
 
@@ -32,17 +32,17 @@ export default class CategoryView {
   }
 
   initFunction(
-    getAllCategory: () => Promise<Category[] | null>,
-    transform: Transform,
+    getAllCategory: PromiseOrNull<Category[]>,
+    evDataTrigger: EventDataTrigger,
   ) {
     this.getAllCategory = getAllCategory;
-    this.transform = transform;
+    this.evDataTrigger = evDataTrigger;
   }
 
   sendData() {
     const data: Data = { listCategories: this.listCategory! };
 
-    this.transform!.onSendSignal('categoryView', data);
+    this.evDataTrigger!.onSendSignal('categoryView', data);
   }
 
   handlerEventCategoryDialog() {
@@ -57,7 +57,7 @@ export default class CategoryView {
    * Load category data
    * @param {function} getAllCategory Get all category function
    */
-  async loadCategory() {
+  async loadCategory(): Promise<void> {
     if (!this.listCategory) {
       this.listCategory = await this.getAllCategory!();
 

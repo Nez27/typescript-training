@@ -4,11 +4,20 @@ import { clearAccessToken, formatNumber } from '../../helpers/data';
 
 import WalletView from './walletView';
 import Wallet from 'models/wallet';
-import Transform from 'helpers/transform';
+import EventDataTrigger from 'helpers/evDataTrigger';
 import Transaction from 'models/transaction';
 import User from 'models/user';
-import { Data, TError } from 'global/types';
-import { DEFAULT_TITLE_ERROR_TOAST } from 'constants/messages/dialog';
+import {
+  Data,
+  IBudgetViewFunc,
+  IHomeFunc,
+  ITransactionViewFunc,
+  IWalletViewFunc,
+  Nullable,
+  PromiseOrNull,
+  TError,
+} from 'global/types';
+import { DEFAULT_TITLE_ERROR_TOAST } from 'constants/messages';
 import { redirectToLoginPage } from 'helpers/url';
 import Category from 'models/category';
 import CategoryView from './categoryView';
@@ -41,31 +50,32 @@ export default class HomeView extends CommonView {
 
   amountInputs: NodeListOf<Element>;
 
-  user: User | null = null;
+  user: Nullable<User> = null;
 
-  wallet: Wallet | null = null;
+  wallet: Nullable<Wallet> = null;
 
-  listTransactions: Transaction[] | null = null;
+  listTransactions: Transaction[] = [];
 
   transactionDetails: TransactionDetail[] = [];
 
-  getInfoUserLogin: (() => Promise<User | null>) | null = null;
+  getInfoUserLogin: Nullable<PromiseOrNull<User>> = null;
 
-  getWalletByIdUser: ((idUser: string) => Promise<Wallet | null>) | null = null;
+  getWalletByIdUser: Nullable<(idUser: string) => Promise<Wallet | null>> =
+    null;
 
-  getAllCategory: (() => Promise<Category[] | null>) | null = null;
+  getAllCategory: Nullable<() => Promise<Category[] | null>> = null;
 
-  getAllTransactions:
-    | ((idUser: string) => Promise<Transaction[] | null>)
-    | null = null;
+  getAllTransactions: Nullable<
+    (idUser: string) => Promise<Transaction[] | null>
+  > = null;
 
-  deleteTransaction: ((idTransaction: string) => Promise<void>) | null = null;
+  deleteTransaction: Nullable<(idTransaction: string) => Promise<void>> = null;
 
-  saveWallet: ((wallet: Wallet) => Promise<void>) | null = null;
+  saveWallet: Nullable<(wallet: Wallet) => Promise<void>> = null;
 
-  saveTransaction: ((transaction: Transaction) => Promise<void>) | null = null;
+  saveTransaction: Nullable<(transaction: Transaction) => Promise<void>> = null;
 
-  transform: Transform | null = null;
+  evDataTrigger: Nullable<EventDataTrigger> = null;
 
   constructor() {
     super();
@@ -89,25 +99,17 @@ export default class HomeView extends CommonView {
     this.handleEventToast();
   }
 
-  initFunction(
-    getInfoUserLogin: () => Promise<User | null>,
-    getWalletByIdUser: (idUser: string) => Promise<Wallet | null>,
-    getAllCategory: () => Promise<Category[] | null>,
-    getAllTransactions: (idUser: string) => Promise<Transaction[] | null>,
-    saveWallet: (wallet: Wallet) => Promise<void>,
-    saveTransaction: (transaction: Transaction) => Promise<void>,
-    deleteTransaction: (idTransaction: string) => Promise<void>,
-    transform: Transform,
-  ) {
-    this.getInfoUserLogin = getInfoUserLogin;
-    this.getWalletByIdUser = getWalletByIdUser;
-    this.getAllCategory = getAllCategory;
-    this.getAllTransactions = getAllTransactions;
-    this.saveWallet = saveWallet;
-    this.saveTransaction = saveTransaction;
-    this.deleteTransaction = deleteTransaction;
+  // ----------------------- Init function ----------------------- //
+  initFunction(func: IHomeFunc) {
+    this.getInfoUserLogin = func.getInfoUserLogin || null;
+    this.getWalletByIdUser = func.getWalletByIdUser || null;
+    this.getAllCategory = func.getAllCategory || null;
+    this.getAllTransactions = func.getAllTransactions || null;
+    this.saveWallet = func.saveWallet || null;
+    this.saveTransaction = func.saveTransaction || null;
+    this.deleteTransaction = func.deleteTransaction || null;
 
-    this.transform = transform;
+    this.evDataTrigger = EventDataTrigger.Instance;
 
     // Init function for child view
     this.initWalletViewFunction();
@@ -119,57 +121,61 @@ export default class HomeView extends CommonView {
   }
 
   initTransactionViewFunction() {
-    this.transactionView.initFunction(
-      this.toggleLoaderSpinner.bind(this),
-      this.deleteTransaction!,
-      this.loadTransactionData.bind(this),
-      this.updateAmountWallet.bind(this),
-      this.loadData.bind(this),
-      this.showSuccessToast.bind(this),
-      this.showErrorToast.bind(this),
-      this.saveTransaction!,
-      this.transform,
-    );
+    const func: ITransactionViewFunc = {
+      toggleLoaderSpinner: this.toggleLoaderSpinner.bind(this),
+      deleteTransaction: this.deleteTransaction!,
+      loadTransactionData: this.loadTransactionData.bind(this),
+      updateAmountWallet: this.updateAmountWallet.bind(this),
+      loadData: this.loadData.bind(this),
+      showSuccessToast: this.showSuccessToast.bind(this),
+      showErrorToast: this.showErrorToast.bind(this),
+      saveTransaction: this.saveTransaction!,
+    };
+
+    this.transactionView.initFunction(func);
   }
 
   initBudgetViewFunction() {
-    this.budgetView.initFunction(
-      this.showErrorToast.bind(this),
-      this.showSuccessToast.bind(this),
-      this.toggleLoaderSpinner.bind(this),
-      this.saveTransaction!.bind(this),
-      this.loadTransactionData.bind(this),
-      this.updateAmountWallet.bind(this),
-      this.loadData.bind(this),
-      this.transform,
-    );
+    const func: IBudgetViewFunc = {
+      showErrorToast: this.showErrorToast.bind(this),
+      showSuccessToast: this.showSuccessToast.bind(this),
+      toggleLoaderSpinner: this.toggleLoaderSpinner.bind(this),
+      saveTransaction: this.saveTransaction!.bind(this),
+      loadTransactionData: this.loadTransactionData.bind(this),
+      updateAmountWallet: this.updateAmountWallet.bind(this),
+      loadData: this.loadData.bind(this),
+    };
+
+    this.budgetView.initFunction(func);
   }
 
   initCategoryViewFunction() {
-    this.categoryView.initFunction(this.getAllCategory!, this.transform!);
+    this.categoryView.initFunction(this.getAllCategory!, this.evDataTrigger!);
   }
 
   initSummaryTabViewFunction() {
-    this.summaryTabView.initFunction(this.transform!);
+    this.summaryTabView.initFunction(this.evDataTrigger!);
   }
 
   initTransactionTabViewFunction() {
-    this.transactionTabView.initFunction(this.transform!);
+    this.transactionTabView.initFunction(this.evDataTrigger!);
   }
 
   initWalletViewFunction() {
-    this.walletView.initFunction(
-      this.transform,
-      this.toggleLoaderSpinner.bind(this),
-      this.saveWallet,
-      this.saveTransaction,
-      this.loadTransactionData.bind(this),
-      this.loadData.bind(this),
-      this.loadEvent.bind(this),
-      this.showSuccessToast.bind(this),
-      this.showErrorToast.bind(this),
-    );
+    const func: IWalletViewFunc = {
+      toggleLoaderSpinner: this.toggleLoaderSpinner.bind(this),
+      saveWallet: this.saveWallet,
+      saveTransaction: this.saveTransaction,
+      loadTransactionData: this.loadTransactionData.bind(this),
+      loadData: this.loadData.bind(this),
+      loadEvent: this.loadEvent.bind(this),
+      showSuccessToast: this.showSuccessToast.bind(this),
+      showErrorToast: this.showErrorToast.bind(this),
+    };
+
+    this.walletView.initFunction(func);
   }
+  // ----------------------- End ----------------------- //
 
   subscribeListenerData() {
     this.subscribe();
@@ -180,7 +186,7 @@ export default class HomeView extends CommonView {
     this.walletView.subscribe();
   }
 
-  async loadData() {
+  async loadData(): Promise<void> {
     // Send data to other class
     this.sendData();
 
@@ -195,7 +201,7 @@ export default class HomeView extends CommonView {
     await this.updateAmountWallet();
   }
 
-  async loadPage() {
+  async loadPage(): Promise<void> {
     this.toggleLoaderSpinner();
     const user = await this.getInfoUserLogin!();
 
@@ -229,7 +235,7 @@ export default class HomeView extends CommonView {
   // ---------------------LOAD DATA---------------------//
 
   subscribe() {
-    this.transform!.create('homeView', this.updateData.bind(this));
+    this.evDataTrigger!.create('homeView', this.updateData.bind(this));
   }
 
   sendData() {
@@ -239,7 +245,7 @@ export default class HomeView extends CommonView {
       user: this.user!,
     };
 
-    this.transform!.onSendSignal('homeView', data);
+    this.evDataTrigger!.onSendSignal('homeView', data);
   }
 
   updateData(data: Data) {
@@ -251,7 +257,7 @@ export default class HomeView extends CommonView {
   /**
    * Load wallet user
    */
-  async loadWalletUser() {
+  async loadWalletUser(): Promise<void> {
     const wallet = this.wallet
       ? this.wallet
       : await this.getWalletByIdUser!(this.user!.id);
@@ -273,13 +279,15 @@ export default class HomeView extends CommonView {
     this.saveWallet!(this.wallet!);
   }
 
-  async loadTransactionData() {
-    this.listTransactions = await this.getAllTransactions!(this.wallet!.idUser);
+  async loadTransactionData(): Promise<void> {
+    const data = await this.getAllTransactions!(this.wallet!.idUser);
+
+    if (data) this.listTransactions = data;
 
     this.sendData();
   }
 
-  async updateAmountWallet() {
+  async updateAmountWallet(): Promise<void> {
     let inflow = 0;
     let outflow = 0;
     // Init data first
@@ -315,7 +323,7 @@ export default class HomeView extends CommonView {
    * Implement error toast in site
    * @param {string} content The content will show in error toast
    */
-  showErrorToast(error: TError | string): void {
+  showErrorToast(error: TError) {
     const title =
       typeof error === 'object' && error.title
         ? error.title

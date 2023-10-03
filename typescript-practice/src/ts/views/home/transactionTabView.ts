@@ -1,4 +1,4 @@
-import Transform from 'helpers/transform';
+import EventDataTrigger from 'helpers/evDataTrigger';
 import {
   createTransactionDetailObject,
   getAllCategoryNameInTransactions,
@@ -6,7 +6,7 @@ import {
 } from '../../helpers/data';
 import { formatNumber } from '../../helpers/data';
 import TransactionView from './transactionView';
-import { Data } from 'global/types';
+import { Data, Nullable } from 'global/types';
 import Wallet from 'models/wallet';
 import Transaction from 'models/transaction';
 import Category from 'models/category';
@@ -15,9 +15,9 @@ import TransactionDetail from 'models/transactionDetail';
 export default class TransactionTabView {
   transactionView: TransactionView;
 
-  transform: Transform | null = null;
+  evDataTrigger: Nullable<EventDataTrigger> = null;
 
-  wallet: Wallet | null = null;
+  wallet: Nullable<Wallet> = null;
 
   listTransactions: Transaction[] = [];
 
@@ -30,12 +30,15 @@ export default class TransactionTabView {
     this.addEventTransactionItem();
   }
 
-  initFunction(transform: Transform) {
-    this.transform = transform;
+  initFunction(evDataTrigger: EventDataTrigger) {
+    this.evDataTrigger = evDataTrigger;
   }
 
   subscribe() {
-    this.transform!.create('transactionTabView', this.updateData.bind(this));
+    this.evDataTrigger!.create(
+      'transactionTabView',
+      this.updateData.bind(this),
+    );
   }
 
   updateData(data: Data) {
@@ -46,7 +49,7 @@ export default class TransactionTabView {
     if (data.listCategories) this.listCategories = data.listCategories;
   }
 
-  async loadTransactionTab() {
+  async loadTransactionTab(): Promise<void> {
     // Load category
     // Init data first
     this.transactionDetails = this.loadTransactionDetailsData();
@@ -100,7 +103,7 @@ export default class TransactionTabView {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  transactionDetailMarkup(transactionDetail: TransactionDetail) {
+  transactionDetailMarkup(transactionDetail: TransactionDetail): string {
     const itemTransaction = () => {
       const listMarkup: string[] = [];
 

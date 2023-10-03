@@ -1,27 +1,28 @@
 import CommonView from './commonView';
-import { ERROR_MESSAGE_DEFAULT } from '../constants/messages/dialog';
 import {
   INVALID_EMAIL_FORMAT,
   PASSWORD_NOT_MATCH,
   PASSWORD_NOT_STRONG,
-} from 'constants/messages/form';
+  ERROR_MESSAGE_DEFAULT,
+} from 'constants/messages';
 import {
   compare2Password,
   isValidPassword,
   isValidateEmail,
   renderRequiredText,
 } from '../helpers/validatorForm';
+import { Nullable } from 'global/types';
 
 export default class AuthenticationView extends CommonView {
-  public formEl: HTMLBodyElement | null;
+  public formEl: Nullable<HTMLBodyElement>;
 
-  public emailEl: HTMLBodyElement | null;
+  public emailEl: Nullable<HTMLBodyElement>;
 
   public messageDefault: string[];
 
-  public inputPasswordEl: HTMLBodyElement | null;
+  public inputPasswordEl: Nullable<HTMLBodyElement>;
 
-  public inputPasswordConfirmEl: HTMLBodyElement | null;
+  public inputPasswordConfirmEl: Nullable<HTMLBodyElement>;
 
   public listError: string[];
 
@@ -70,7 +71,7 @@ export default class AuthenticationView extends CommonView {
     return false;
   }
 
-  validatePasswordConfirm(password: string, passwordConfirm: string) {
+  validatePasswordConfirm(password: string, passwordConfirm: string): boolean {
     if (passwordConfirm) {
       if (!compare2Password(password, passwordConfirm)) {
         this.listError.push(PASSWORD_NOT_MATCH);
@@ -120,7 +121,7 @@ export default class AuthenticationView extends CommonView {
   /**
    * Add event listener for input field at form
    */
-  addHandlerInputFormChange(): void {
+  addHandlerInputFormChange() {
     if (this.formEl)
       this.formEl.addEventListener('input', () => {
         this.clearErrorMessage();
@@ -131,7 +132,7 @@ export default class AuthenticationView extends CommonView {
    * Show error message with error style input password.
    * @param {string} message The error message you want show in form.
    */
-  showError(message: string[]): void {
+  showError(message: string[]) {
     this.renderError(message);
   }
 
@@ -139,7 +140,7 @@ export default class AuthenticationView extends CommonView {
    * Show error message in form
    * @param {string} message The message will show in form
    */
-  renderError(messages = this.messageDefault): void {
+  renderError(messages = this.messageDefault) {
     if (messages.length > 0) {
       const messageItemMarkup = messages
         .map((message) => `<li>${message}</li>`)

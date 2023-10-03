@@ -3,13 +3,14 @@ import LoginView from './loginView';
 import RegisterView from './registerView';
 import { URL } from 'constants/config';
 import HomeView from './home/homeView';
+import { Nullable } from 'global/types';
 
 export default class View {
-  public registerView: RegisterView | null = null;
+  public registerView: Nullable<RegisterView> = null;
 
-  public loginView: LoginView | null = null;
+  public loginView: Nullable<LoginView> = null;
 
-  public homeView: HomeView | null = null;
+  public homeView: Nullable<HomeView> = null;
 
   constructor() {
     switch (getSubdirectoryURL()) {

@@ -1,23 +1,14 @@
 import { generateId } from '../helpers/data';
 
 export default class Wallet {
-  id: string;
-
-  walletName: string;
-
-  inflow: number;
-
-  outflow: number;
-
-  idUser: string;
-
   constructor(
-    walletName: string,
-    inflow: number,
-    outflow: number,
-    idUser: string,
+    public id: string,
+    public walletName: string,
+    public inflow: number,
+    public outflow: number,
+    public idUser: string,
   ) {
-    this.id = generateId();
+    this.id = id ? id : generateId();
     this.walletName = walletName;
     this.inflow = inflow;
     this.outflow = outflow;

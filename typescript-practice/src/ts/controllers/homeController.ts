@@ -1,10 +1,10 @@
 import HomeView from 'views/home/homeView';
-import Transform from '../helpers/transform';
 import Service from 'services';
 import View from 'views';
 import Wallet from 'models/wallet';
 import Transaction from 'models/transaction';
 import Category from 'models/category';
+import { IHomeFunc } from 'global/types';
 
 export default class HomeController {
   public homeView: HomeView | null = null;
@@ -47,16 +47,17 @@ export default class HomeController {
 
   init() {
     if (this.homeView) {
-      this.homeView.initFunction(
-        this.handlerGetInfoUserLogin.bind(this),
-        this.handlerGetWalletByIdUser.bind(this),
-        this.handlerGetAllCategory.bind(this),
-        this.handlerGetAllTransactions.bind(this),
-        this.handlerSaveWallet.bind(this),
-        this.handlerSaveTransaction.bind(this),
-        this.handlerDeleteTransaction.bind(this),
-        new Transform(),
-      );
+      const func: IHomeFunc = {
+        getInfoUserLogin: this.handlerGetInfoUserLogin.bind(this),
+        getWalletByIdUser: this.handlerGetWalletByIdUser.bind(this),
+        getAllCategory: this.handlerGetAllCategory.bind(this),
+        getAllTransactions: this.handlerGetAllTransactions.bind(this),
+        saveWallet: this.handlerSaveWallet.bind(this),
+        saveTransaction: this.handlerSaveTransaction.bind(this),
+        deleteTransaction: this.handlerDeleteTransaction.bind(this),
+      };
+
+      this.homeView.initFunction(func);
 
       this.homeView.loadPage();
 

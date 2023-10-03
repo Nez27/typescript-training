@@ -1,16 +1,13 @@
 import { generateId } from '../helpers/data';
 
 export default class User {
-  id: string;
-
-  email: string;
-
-  password: string;
-
-  accessToken: string;
-
-  constructor(email: string, password: string, accessToken?: string) {
-    this.id = generateId();
+  constructor(
+    public id: string,
+    public email: string,
+    public password: string,
+    public accessToken?: string,
+  ) {
+    this.id = id ? id : generateId();
     this.email = email;
     this.password = password || '';
     this.accessToken = accessToken || '';

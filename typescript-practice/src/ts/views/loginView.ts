@@ -1,10 +1,12 @@
 import AuthenticationView from './authenticationView';
 import { TypeToast, BTN_CONTENT } from '../constants/config';
 import User from 'models/user';
-import { DEFAULT_TITLE_ERROR_TOAST } from 'constants/messages/dialog';
-import { CustomError, TError } from 'global/types';
+import {
+  DEFAULT_TITLE_ERROR_TOAST,
+  ERROR_CREDENTIAL,
+} from 'constants/messages';
+import { CustomError, Nullable, PromiseOrNull, TError } from 'global/types';
 import { redirectToLoginPage } from 'helpers/url';
-import { ERROR_CREDENTIAL } from 'constants/messages/form';
 
 export default class LoginView extends AuthenticationView {
   constructor() {
@@ -15,7 +17,7 @@ export default class LoginView extends AuthenticationView {
     this.handleEventToast();
   }
 
-  async loadPage(getInfoUserLogin: () => Promise<User | null>) {
+  async loadPage(getInfoUserLogin: PromiseOrNull<User>) {
     this.toggleLoaderSpinner();
     const user = await getInfoUserLogin();
     if (user) {
@@ -28,7 +30,7 @@ export default class LoginView extends AuthenticationView {
    * Implement error toast in site
    * @param {string} content The content will show in error toast
    */
-  initErrorToast(error: TError | string): void {
+  initErrorToast(error: TError) {
     const title =
       typeof error === 'object' && error.title
         ? error.title
@@ -90,7 +92,7 @@ export default class LoginView extends AuthenticationView {
       }
     } catch (error) {
       // Show toast error
-      this.initErrorToast(error as string | TError);
+      this.initErrorToast(error as TError);
     }
     // Close spinner
     this.toggleLoaderSpinner();
@@ -100,7 +102,7 @@ export default class LoginView extends AuthenticationView {
    * Get data from user input
    * @returns {Object || null} Return object or null
    */
-  validateForm(event: Event): User | null {
+  validateForm(event: Event): Nullable<User> {
     if (event.target) {
       const formData = new FormData(event.target as HTMLFormElement);
       const email = formData.get('email') as string;
@@ -116,7 +118,7 @@ export default class LoginView extends AuthenticationView {
         this.emailEl.classList.toggle('error-input', !emailValid);
         this.inputPasswordEl.classList.toggle('error-input', !passwordValid);
         if (emailValid && passwordValid) {
-          return new User(email, password);
+          return new User('', email, password);
         }
       }
     }

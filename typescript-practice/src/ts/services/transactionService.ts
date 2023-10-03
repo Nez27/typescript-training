@@ -28,7 +28,7 @@ export default class TransactionService extends CommonService<Transaction> {
     return results || null;
   }
 
-  async deleteTransaction(idTransaction: string) {
+  async deleteTransaction(idTransaction: string): Promise<void> {
     await this.deleteData(idTransaction);
   }
 }

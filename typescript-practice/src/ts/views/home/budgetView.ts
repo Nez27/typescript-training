@@ -1,39 +1,43 @@
 import Transaction from '../../models/transaction';
 import { renderRequiredText } from '../../helpers/validatorForm';
-import { Data, TError } from 'global/types';
-import Transform from 'helpers/transform';
+import EventDataTrigger from 'helpers/evDataTrigger';
 import Wallet from 'models/wallet';
 import User from 'models/user';
 import { DEFAULT_CATEGORY } from 'constants/config';
+import { ADD_TRANSACTION_SUCCESS, DEFAULT_MESSAGE } from 'constants/messages';
 import {
-  ADD_TRANSACTION_SUCCESS,
-  DEFAULT_MESSAGE,
-} from 'constants/messages/dialog';
+  IBudgetViewFunc,
+  Data,
+  Nullable,
+  PromiseVoid,
+  TError,
+  VoidFunc,
+} from 'global/types';
 
 export default class BudgetView {
-  budgetDialog: HTMLDialogElement | null = null;
+  budgetDialog: Nullable<HTMLDialogElement> = null;
 
-  addBudgetBtn: HTMLElement | null = null;
+  addBudgetBtn: Nullable<HTMLElement> = null;
 
-  transform: Transform | null = null;
+  evDataTrigger: Nullable<EventDataTrigger> = null;
 
-  toggleLoaderSpinner: (() => void) | null = null;
+  toggleLoaderSpinner: Nullable<VoidFunc> = null;
 
-  saveTransaction: ((transaction: Transaction) => Promise<void>) | null = null;
+  saveTransaction: Nullable<(transaction: Transaction) => Promise<void>> = null;
 
-  loadTransactionData: (() => Promise<void>) | null = null;
+  loadTransactionData: Nullable<PromiseVoid> = null;
 
-  updateAmountWallet: (() => Promise<void>) | null = null;
+  updateAmountWallet: Nullable<PromiseVoid> = null;
 
-  loadData: (() => Promise<void>) | null = null;
+  loadData: Nullable<PromiseVoid> = null;
 
-  showSuccessToast: ((title: string, message: string) => void) | null = null;
+  showSuccessToast: Nullable<(title: string, message: string) => void> = null;
 
-  showErrorToast: ((error: string | TError) => void) | null = null;
+  showErrorToast: Nullable<(error: TError) => void> = null;
 
-  wallet: Wallet | null = null;
+  wallet: Nullable<Wallet> = null;
 
-  user: User | null = null;
+  user: Nullable<User> = null;
 
   constructor() {
     this.budgetDialog = document.getElementById(
@@ -44,34 +48,26 @@ export default class BudgetView {
     this.handlerEventBudgetView();
   }
 
-  initFunction(
-    showErrorToast: (error: string | TError) => void,
-    showSuccessToast: (title: string, message: string) => void,
-    toggleLoaderSpinner: () => void,
-    saveTransaction: ((transaction: Transaction) => Promise<void>) | null,
-    loadTransactionData: () => Promise<void>,
-    updateAmountWallet: () => Promise<void>,
-    loadData: () => Promise<void>,
-    transform: Transform | null,
-  ) {
-    this.showErrorToast = showErrorToast;
-    this.showSuccessToast = showSuccessToast;
-    this.toggleLoaderSpinner = toggleLoaderSpinner;
-    this.saveTransaction = saveTransaction;
-    this.loadTransactionData = loadTransactionData;
-    this.updateAmountWallet = updateAmountWallet;
-    this.loadData = loadData;
-    this.transform = transform;
+  initFunction(func: IBudgetViewFunc) {
+    this.showErrorToast = func.showErrorToast;
+    this.showSuccessToast = func.showSuccessToast;
+    this.toggleLoaderSpinner = func.toggleLoaderSpinner;
+    this.saveTransaction = func.saveTransaction;
+    this.loadTransactionData = func.loadTransactionData;
+    this.updateAmountWallet = func.updateAmountWallet;
+    this.loadData = func.loadData;
+
+    this.evDataTrigger = EventDataTrigger.Instance;
   }
 
   subscribe() {
-    this.transform!.create('budgetView', this.updateData.bind(this));
+    this.evDataTrigger!.create('budgetView', this.updateData.bind(this));
   }
 
   sendData() {
     const data = { wallet: this.wallet! };
 
-    this.transform!.onSendSignal('budgetView', data);
+    this.evDataTrigger!.onSendSignal('budgetView', data);
   }
 
   updateData(data: Data) {
@@ -110,7 +106,7 @@ export default class BudgetView {
     });
   }
 
-  async submitBudgetForm() {
+  async submitBudgetForm(): Promise<void> {
     try {
       const form = document.getElementById('formAddBudget') as HTMLFormElement;
       const formAddBudget = new FormData(form);
@@ -149,11 +145,11 @@ export default class BudgetView {
         (<HTMLFormElement>document.getElementById('formAddBudget')!).reset();
       }
     } catch (error) {
-      this.showErrorToast!(error as string | TError);
+      this.showErrorToast!(error as TError);
     }
   }
 
-  validateBudgetForm(date: string, amount: number) {
+  validateBudgetForm(date: string, amount: number): boolean {
     const inputFieldEl =
       this.budgetDialog!.querySelectorAll('.form__input-field');
 
