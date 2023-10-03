@@ -1,32 +1,39 @@
 import Transaction from '../../models/transaction';
 import Wallet from '../../models/wallet';
 import { renderRequiredText } from '../../helpers/validatorForm';
-import Transform from 'helpers/transform';
-import { Data, TError } from 'global/types';
+import EventDataTrigger from 'helpers/evDataTrigger';
+import {
+  Data,
+  IWalletViewFunc,
+  Nullable,
+  PromiseVoid,
+  TError,
+  VoidFunc,
+} from 'global/types';
 import User from 'models/user';
 import { FIRST_ADD_WALLET_NOTE } from 'constants/defaultVariable';
-import { ADD_WALLET_SUCCESS, DEFAULT_MESSAGE } from 'constants/messages/dialog';
+import { ADD_WALLET_SUCCESS, DEFAULT_MESSAGE } from 'constants/messages';
 
 export default class WalletView {
-  walletDialog: HTMLDialogElement | null = null;
+  walletDialog: Nullable<HTMLDialogElement> = null;
 
-  transform: Transform | null = null;
+  evDataTrigger: Nullable<EventDataTrigger> = null;
 
-  toggleLoaderSpinner: (() => void) | null = null;
+  toggleLoaderSpinner: Nullable<VoidFunc> = null;
 
-  saveWallet: ((wallet: Wallet) => Promise<void>) | null = null;
+  saveWallet: Nullable<(wallet: Wallet) => Promise<void>> = null;
 
-  saveTransaction: ((transaction: Transaction) => Promise<void>) | null = null;
+  saveTransaction: Nullable<(transaction: Transaction) => Promise<void>> = null;
 
-  loadTransactionData: (() => Promise<void>) | null = null;
+  loadTransactionData: Nullable<PromiseVoid> = null;
 
-  loadData: (() => Promise<void>) | null = null;
+  loadData: Nullable<PromiseVoid> = null;
 
-  loadEvent: (() => void) | null = null;
+  loadEvent: Nullable<VoidFunc> = null;
 
   showSuccessToast: ((title: string, message: string) => void) | null = null;
 
-  showErrorToast: ((error: string | TError) => void) | null = null;
+  showErrorToast: ((error: TError) => void) | null = null;
 
   user: User | null = null;
 
@@ -40,30 +47,21 @@ export default class WalletView {
     this.addHandlerEventWalletForm();
   }
 
-  initFunction(
-    transform: Transform | null,
-    toggleLoaderSpinner: () => void,
-    saveWallet: ((wallet: Wallet) => Promise<void>) | null,
-    saveTransaction: ((transaction: Transaction) => Promise<void>) | null,
-    loadTransactionData: () => Promise<void>,
-    loadData: () => Promise<void>,
-    loadEvent: () => void,
-    showSuccessToast: (title: string, message: string) => void,
-    showErrorToast: (error: string | TError) => void,
-  ) {
-    this.transform = transform;
-    this.toggleLoaderSpinner = toggleLoaderSpinner;
-    this.saveWallet = saveWallet;
-    this.saveTransaction = saveTransaction;
-    this.loadTransactionData = loadTransactionData;
-    this.loadData = loadData;
-    this.loadEvent = loadEvent;
-    this.showSuccessToast = showSuccessToast;
-    this.showErrorToast = showErrorToast;
+  initFunction(func: IWalletViewFunc) {
+    this.toggleLoaderSpinner = func.toggleLoaderSpinner;
+    this.saveWallet = func.saveWallet;
+    this.saveTransaction = func.saveTransaction;
+    this.loadTransactionData = func.loadTransactionData;
+    this.loadData = func.loadData;
+    this.loadEvent = func.loadEvent;
+    this.showSuccessToast = func.showSuccessToast;
+    this.showErrorToast = func.showErrorToast;
+
+    this.evDataTrigger = EventDataTrigger.Instance;
   }
 
   subscribe() {
-    this.transform!.create('walletView', this.updateData.bind(this));
+    this.evDataTrigger!.create('walletView', this.updateData.bind(this));
   }
 
   sendData() {
@@ -72,7 +70,7 @@ export default class WalletView {
       user: this.user!,
     };
 
-    this.transform!.onSendSignal('walletView', data);
+    this.evDataTrigger!.onSendSignal('walletView', data);
   }
 
   updateData(data: Data) {
@@ -116,7 +114,7 @@ export default class WalletView {
     });
   }
 
-  async submitWalletForm() {
+  async submitWalletForm(): Promise<void> {
     try {
       // Wallet info
       const form = document.getElementById('walletForm') as HTMLFormElement;
@@ -128,7 +126,7 @@ export default class WalletView {
         this.walletDialog!.close();
         this.toggleLoaderSpinner!();
 
-        const wallet = new Wallet(walletName, +amount, 0, this.user!.id);
+        const wallet = new Wallet('', walletName, +amount, 0, this.user!.id);
         this.wallet = wallet;
 
         this.sendData();
@@ -156,12 +154,12 @@ export default class WalletView {
       }
     } catch (error) {
       // Show toast error
-      this.showErrorToast!(error as string | TError);
+      this.showErrorToast!(error as TError);
       this.toggleLoaderSpinner!();
     }
   }
 
-  validateWalletDialog(walletName: string, amount: number) {
+  validateWalletDialog(walletName: string, amount: number): boolean {
     const inputFieldEls =
       this.walletDialog!.querySelectorAll('.form__input-field');
 

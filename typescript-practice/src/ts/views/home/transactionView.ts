@@ -1,19 +1,26 @@
 import Transaction from 'models/transaction';
 import defaultCategoryIcon from '../../../assets/images/question-icon.svg';
 import CategoryView from './categoryView';
-import Transform from 'helpers/transform';
-import { Data, TError } from 'global/types';
+import EventDataTrigger from 'helpers/evDataTrigger';
+import {
+  Data,
+  ITransactionViewFunc,
+  Nullable,
+  PromiseVoid,
+  TError,
+  VoidFunc,
+} from 'global/types';
 import Wallet from 'models/wallet';
 import Category from 'models/category';
 import {
   ADD_TRANSACTION_SUCCESS,
   DEFAULT_MESSAGE,
   UPDATE_TRANSACTION_SUCCESS,
-} from 'constants/messages/dialog';
+} from 'constants/messages';
 import { renderRequiredText } from 'helpers/validatorForm';
 
 export default class TransactionView {
-  wallet: Wallet | null = null;
+  wallet: Nullable<Wallet> = null;
 
   listTransactions: Transaction[] = [];
 
@@ -21,29 +28,29 @@ export default class TransactionView {
 
   categoryView: CategoryView;
 
-  addTransactionBtn: HTMLElement | null = null;
+  addTransactionBtn: Nullable<HTMLElement> = null;
 
-  transactionDialog: HTMLDialogElement | null = null;
+  transactionDialog: Nullable<HTMLDialogElement> = null;
 
-  transactionForm: HTMLFormElement | null = null;
+  transactionForm: Nullable<HTMLFormElement> = null;
 
-  toggleLoaderSpinner: (() => void) | null = null;
+  toggleLoaderSpinner: Nullable<VoidFunc> = null;
 
-  deleteTransaction: ((idTransaction: string) => Promise<void>) | null = null;
+  deleteTransaction: Nullable<(idTransaction: string) => Promise<void>> = null;
 
-  loadTransactionData: (() => Promise<void>) | null = null;
+  loadTransactionData: Nullable<PromiseVoid> = null;
 
-  updateAmountWallet: (() => Promise<void>) | null = null;
+  updateAmountWallet: Nullable<PromiseVoid> = null;
 
-  loadData: (() => Promise<void>) | null = null;
+  loadData: Nullable<PromiseVoid> = null;
 
   showSuccessToast: ((title: string, message: string) => void) | null = null;
 
-  showErrorToast: ((error: string | TError) => void) | null = null;
+  showErrorToast: ((error: TError) => void) | null = null;
 
-  saveTransaction: ((transaction: Transaction) => Promise<void>) | null = null;
+  saveTransaction: Nullable<(transaction: Transaction) => Promise<void>> = null;
 
-  transform: Transform | null = null;
+  evDataTrigger: EventDataTrigger | null = null;
 
   constructor(categoryView: CategoryView) {
     this.addTransactionBtn = document.getElementById('addTransaction');
@@ -59,30 +66,21 @@ export default class TransactionView {
     this.categoryView = categoryView;
   }
 
-  initFunction(
-    toggleLoaderSpinner: () => void,
-    deleteTransaction: (idTransaction: string) => Promise<void>,
-    loadTransactionData: () => Promise<void>,
-    updateAmountWallet: () => Promise<void>,
-    loadData: () => Promise<void>,
-    showSuccessToast: (title: string, message: string) => void,
-    showErrorToast: (error: string | TError) => void,
-    saveTransaction: (transaction: Transaction) => Promise<void>,
-    transform: Transform | null,
-  ) {
-    this.toggleLoaderSpinner = toggleLoaderSpinner;
-    this.deleteTransaction = deleteTransaction;
-    this.loadTransactionData = loadTransactionData;
-    this.updateAmountWallet = updateAmountWallet;
-    this.loadData = loadData;
-    this.showSuccessToast = showSuccessToast;
-    this.showErrorToast = showErrorToast;
-    this.saveTransaction = saveTransaction;
-    this.transform = transform;
+  initFunction(func: ITransactionViewFunc) {
+    this.toggleLoaderSpinner = func.toggleLoaderSpinner;
+    this.deleteTransaction = func.deleteTransaction;
+    this.loadTransactionData = func.loadTransactionData;
+    this.updateAmountWallet = func.updateAmountWallet;
+    this.loadData = func.loadData;
+    this.showSuccessToast = func.showSuccessToast;
+    this.showErrorToast = func.showErrorToast;
+    this.saveTransaction = func.saveTransaction;
+
+    this.evDataTrigger = EventDataTrigger.Instance;
   }
 
   subscribe() {
-    this.transform!.create('transactionView', this.updateData.bind(this));
+    this.evDataTrigger!.create('transactionView', this.updateData.bind(this));
   }
 
   sendData() {
@@ -91,7 +89,7 @@ export default class TransactionView {
       listTransactions: this.listTransactions!,
     };
 
-    this.transform!.onSendSignal('transactionView', data);
+    this.evDataTrigger!.onSendSignal('transactionView', data);
   }
 
   updateData(data: Data) {
@@ -174,7 +172,7 @@ export default class TransactionView {
 
           this.showSuccessToast!('Delete success!', DEFAULT_MESSAGE);
         } catch (error) {
-          this.showErrorToast!(error as string | TError);
+          this.showErrorToast!(error as TError);
         }
         this.toggleLoaderSpinner!();
       }
@@ -253,7 +251,7 @@ export default class TransactionView {
     deleteBtn.classList.toggle('hide', !showDeleteBtn());
   }
 
-  async submitTransactionDialog() {
+  async submitTransactionDialog(): Promise<void> {
     try {
       const dateEl = <HTMLDataElement>(
         this.transactionForm!.querySelector("[name='selected_date']")
@@ -308,12 +306,16 @@ export default class TransactionView {
         this.clearInputTransactionForm();
       }
     } catch (error) {
-      this.showErrorToast!(error as string | TError);
+      this.showErrorToast!(error as TError);
       this.toggleLoaderSpinner!();
     }
   }
 
-  validateTransactionForm(date: string, categoryName: string, amount: number) {
+  validateTransactionForm(
+    date: string,
+    categoryName: string,
+    amount: number,
+  ): boolean {
     const inputFieldEls =
       this.transactionDialog!.querySelectorAll('.form__input-field');
 

@@ -1,8 +1,8 @@
-export const redirectToLoginPage = (): void => {
+export const redirectToLoginPage = () => {
   window.location.replace('/login');
 };
 
-export const getSubdirectoryURL = () => {
+export const getSubdirectoryURL = (): string => {
   const url = window.location.href;
   const parts = url.split('/'); // Results: ['http:', '', 'example.com', '']
   const subDirectory = parts[3]; // Get subdirectory url only

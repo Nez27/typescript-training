@@ -1,10 +1,23 @@
-import { TSignal, Data } from 'global/types';
+import { Data } from 'global/types';
 
-export default class Transform {
+type TSignal = {
+  [key: string]: {
+    name: string;
+    handler: (value: Data) => void;
+  };
+};
+
+export default class EventDataTrigger {
+  private static _instance: EventDataTrigger;
+
   public signal: TSignal;
 
   constructor() {
     this.signal = {};
+  }
+
+  public static get Instance() {
+    return this._instance || (this._instance = new this());
   }
 
   onSendSignal(fromClass: string, value: Data) {

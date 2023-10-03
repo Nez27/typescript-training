@@ -1,25 +1,25 @@
-import Transform from 'helpers/transform';
+import EventDataTrigger from 'helpers/evDataTrigger';
 import { formatNumber } from '../../helpers/data';
-import { Data } from 'global/types';
+import { Data, Nullable } from 'global/types';
 import Wallet from 'models/wallet';
 import Transaction from 'models/transaction';
 import Category from 'models/category';
 
 export default class SummaryTabView {
-  transform: Transform | null = null;
+  evDataTrigger: Nullable<EventDataTrigger> = null;
 
-  wallet: Wallet | null = null;
+  wallet: Nullable<Wallet> = null;
 
   listTransactions: Transaction[] = [];
 
   listCategories: Category[] = [];
 
-  initFunction(transform: Transform) {
-    this.transform = transform;
+  initFunction(evDataTrigger: EventDataTrigger) {
+    this.evDataTrigger = evDataTrigger;
   }
 
   subscribe() {
-    this.transform!.create('summaryTabView', this.updateData.bind(this));
+    this.evDataTrigger!.create('summaryTabView', this.updateData.bind(this));
   }
 
   updateData(data: Data) {

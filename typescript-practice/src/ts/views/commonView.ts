@@ -1,17 +1,18 @@
+import { Nullable } from 'global/types';
 import { MarkIcon, TypeToast } from '../constants/config';
 
 export default class CommonView {
-  public toastDialog: HTMLDialogElement | null = null;
+  public toastDialog: Nullable<HTMLDialogElement> = null;
 
-  public toastIcon: HTMLBodyElement | null = null;
+  public toastIcon: Nullable<HTMLBodyElement> = null;
 
-  public toastBtn: HTMLBodyElement | null = null;
+  public toastBtn: Nullable<HTMLBodyElement> = null;
 
-  public toastTitle: HTMLBodyElement | null = null;
+  public toastTitle: Nullable<HTMLBodyElement> = null;
 
-  public toastContent: HTMLBodyElement | null = null;
+  public toastContent: Nullable<HTMLBodyElement> = null;
 
-  public spinner: HTMLBodyElement | null = null;
+  public spinner: Nullable<HTMLBodyElement> = null;
 
   constructor() {
     this.toastDialog = document.querySelector('.dialog .toast');
@@ -22,7 +23,7 @@ export default class CommonView {
   /**
    * Implement toast in site
    */
-  initToast(): void {
+  initToast() {
     const markup = `
       <dialog class="dialog">
         <div class="toast">
@@ -61,7 +62,7 @@ export default class CommonView {
   /**
    * Show or hide loader screen
    */
-  toggleLoaderSpinner(): void {
+  toggleLoaderSpinner() {
     if (this.spinner) this.spinner.classList.toggle('hidden');
   }
 
@@ -77,18 +78,21 @@ export default class CommonView {
     title: string,
     content: string,
     btnContent: string,
-  ): void {
+  ) {
     // Remove old typeToast class if haved
     Object.keys(TypeToast).forEach((key) => {
       CommonView.removeClassElement(
-        TypeToast[key as TypeToast],
+        TypeToast[key as keyof typeof TypeToast],
         this.toastDialog as HTMLBodyElement | null,
       );
     });
 
     // Remove old icon toast if haved
     Object.keys(MarkIcon).forEach((key) => {
-      CommonView.removeClassElement(MarkIcon[key as MarkIcon], this.toastIcon);
+      CommonView.removeClassElement(
+        MarkIcon[key as keyof typeof MarkIcon],
+        this.toastIcon,
+      );
     });
 
     // Init content toast
@@ -111,7 +115,7 @@ export default class CommonView {
     }
   }
 
-  static removeClassElement(classEl: string, el: HTMLBodyElement | null): void {
+  static removeClassElement(classEl: string, el: HTMLBodyElement | null) {
     if (el && el.classList.contains(classEl)) {
       el.classList.remove(classEl);
     }
@@ -120,7 +124,7 @@ export default class CommonView {
   /**
    * Add event listener for toast
    */
-  handleEventToast(): void {
+  handleEventToast() {
     if (this.toastBtn) {
       this.toastBtn.addEventListener('click', () => {
         if (this.toastDialog) this.toastDialog.close();

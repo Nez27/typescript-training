@@ -19,10 +19,12 @@ export class DataObject<T> {
   }
 }
 
-export interface TError {
+export interface IError {
   title: string;
   message: string;
 }
+
+export type TError = string | IError;
 
 export class CustomError extends Error {
   constructor(
@@ -32,13 +34,6 @@ export class CustomError extends Error {
     super(message);
   }
 }
-
-export type TSignal = {
-  [key: string]: {
-    name: string;
-    handler: (value: Data) => void;
-  };
-};
 
 export interface Data {
   wallet?: Wallet;
@@ -53,4 +48,51 @@ export interface ItemTransaction {
   fullDateString: string;
   note: string;
   amount: number;
+}
+
+export type Nullable<T> = T | null;
+export type PromiseVoid = () => Promise<void>;
+export type VoidFunc = () => void;
+export type PromiseOrNull<T> = () => Promise<T | null>;
+
+export interface IHomeFunc {
+  getInfoUserLogin?: PromiseOrNull<User>;
+  getWalletByIdUser?: (idUser: string) => Promise<Wallet | null>;
+  getAllCategory?: PromiseOrNull<Category[]>;
+  getAllTransactions?: (idUser: string) => Promise<Transaction[] | null>;
+  saveWallet?: (wallet: Wallet) => Promise<void>;
+  saveTransaction?: (transaction: Transaction) => Promise<void>;
+  deleteTransaction?: (idTransaction: string) => Promise<void>;
+}
+
+export interface IBudgetViewFunc {
+  showErrorToast: (error: TError) => void;
+  showSuccessToast: (title: string, message: string) => void;
+  toggleLoaderSpinner: VoidFunc;
+  saveTransaction: Nullable<(transaction: Transaction) => Promise<void>>;
+  loadTransactionData: PromiseVoid;
+  updateAmountWallet: PromiseVoid;
+  loadData: PromiseVoid;
+}
+
+export interface ITransactionViewFunc {
+  toggleLoaderSpinner: VoidFunc;
+  deleteTransaction: (idTransaction: string) => Promise<void>;
+  loadTransactionData: PromiseVoid;
+  updateAmountWallet: PromiseVoid;
+  loadData: PromiseVoid;
+  showSuccessToast: (title: string, message: string) => void;
+  showErrorToast: (error: TError) => void;
+  saveTransaction: (transaction: Transaction) => Promise<void>;
+}
+
+export interface IWalletViewFunc {
+  toggleLoaderSpinner: () => void;
+  saveWallet: ((wallet: Wallet) => Promise<void>) | null;
+  saveTransaction: ((transaction: Transaction) => Promise<void>) | null;
+  loadTransactionData: () => Promise<void>;
+  loadData: () => Promise<void>;
+  loadEvent: () => void;
+  showSuccessToast: (title: string, message: string) => void;
+  showErrorToast: (error: TError) => void;
 }

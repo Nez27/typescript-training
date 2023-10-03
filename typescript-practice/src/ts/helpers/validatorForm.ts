@@ -1,5 +1,5 @@
 import { REGEX } from '../constants/config';
-import { REQUIRED_MESSAGE } from '../constants/messages/form';
+import { REQUIRED_MESSAGE } from '../constants/messages';
 
 /**
  * Validate password
@@ -21,7 +21,7 @@ export const compare2Password = (
   return password === passwordConfirm;
 };
 
-export const renderRequiredText = (field: string, element: Element): void => {
+export const renderRequiredText = (field: string, element: Element) => {
   const markup: string = `
     <p class="error-text">${REQUIRED_MESSAGE(field)}</p>
   `;

@@ -7,8 +7,14 @@ import {
   DEFAULT_TITLE_ERROR_TOAST,
   REGISTER_SUCCESS,
   USER_EXIST_ERROR,
-} from 'constants/messages/dialog';
-import { TError } from 'global/types';
+} from 'constants/messages';
+import { Nullable, PromiseOrNull, TError } from 'global/types';
+
+interface UserInput {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}
 
 export default class RegisterView extends AuthenticationView {
   constructor() {
@@ -21,7 +27,7 @@ export default class RegisterView extends AuthenticationView {
     this.toastBtn = document.querySelector('.toast__redirect-btn');
   }
 
-  async loadPage(getInfoUserLogin: () => Promise<User | null>) {
+  async loadPage(getInfoUserLogin: PromiseOrNull<User>) {
     this.toggleLoaderSpinner();
 
     const user = await getInfoUserLogin();
@@ -37,20 +43,36 @@ export default class RegisterView extends AuthenticationView {
    * Get data from user input
    * @returns {Object || null} Return object or null
    */
-  validateForm(): User | null {
+  getUserFromForm(): Nullable<User> {
     const form = document.getElementById('registerForm') as HTMLFormElement;
     const formData = new FormData(form);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const passwordConfirm = formData.get('password_confirm') as string;
 
-    // Validate user input
-    this.listError = []; // Reset list error
-    const emailValid = this.validateEmail(email);
-    const passwordValid = this.validatePassword(password);
-    const passwordConfirmValid = this.validatePasswordConfirm(
+    const userInput: UserInput = {
+      email,
       password,
       passwordConfirm,
+    };
+
+    const result = this.validateForm(userInput);
+
+    if (result) {
+      return new User('', email, password);
+    }
+
+    return null;
+  }
+
+  validateForm(userInput: UserInput): boolean {
+    // Validate user input
+    this.listError = []; // Reset list error
+    const emailValid = this.validateEmail(userInput.email);
+    const passwordValid = this.validatePassword(userInput.password);
+    const passwordConfirmValid = this.validatePasswordConfirm(
+      userInput.password,
+      userInput.passwordConfirm,
     );
 
     // Show error style
@@ -63,13 +85,9 @@ export default class RegisterView extends AuthenticationView {
       );
     }
 
-    if (emailValid && passwordValid && passwordConfirmValid) {
-      return new User(email, password);
-    }
-
     this.showError(this.listError);
 
-    return null;
+    return emailValid && passwordValid && passwordConfirmValid;
   }
 
   /**
@@ -95,7 +113,7 @@ export default class RegisterView extends AuthenticationView {
    * Implement error toast in site
    * @param {string} content The content will show in error toast
    */
-  initErrorToast(error: TError | string): void {
+  initErrorToast(error: TError) {
     const title =
       typeof error === 'object' && error.title
         ? error.title
@@ -126,10 +144,10 @@ export default class RegisterView extends AuthenticationView {
     saveUser: (user: User) => Promise<void>,
   ) {
     if (this.formEl) {
-      this.formEl.addEventListener('submit', (e) => {
+      this.formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         this.clearErrorMessage();
-        this.submitForm(checkExistUser, saveUser);
+        await this.submitForm(checkExistUser, saveUser);
       });
     }
   }
@@ -137,13 +155,13 @@ export default class RegisterView extends AuthenticationView {
   async submitForm(
     checkExistUser: (email: string) => Promise<boolean>,
     saveUser: (user: User) => Promise<void>,
-  ) {
+  ): Promise<void> {
     try {
       // Load spinner
       this.toggleLoaderSpinner();
 
       // Get validate form
-      const user = this.validateForm();
+      const user = this.getUserFromForm();
 
       // Save user
       if (user) {
@@ -166,7 +184,7 @@ export default class RegisterView extends AuthenticationView {
       }
     } catch (error) {
       // Show toast error
-      this.initErrorToast(error as string | TError);
+      this.initErrorToast(error as TError);
     }
 
     // Close spinner

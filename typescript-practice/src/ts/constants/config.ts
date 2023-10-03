@@ -11,14 +11,15 @@ export const LOCAL_STORAGE = {
   ACCESS_TOKEN: 'accessToken',
 };
 
-export enum TypeToast {
-  success = 'success',
-  error = 'error',
-}
-export enum MarkIcon {
-  success = 'success',
-  error = 'error',
-}
+export const TypeToast = {
+  success: 'success',
+  error: 'error',
+};
+
+export const MarkIcon = {
+  success: 'success',
+  error: 'error',
+};
 
 export const REGEX = {
   PASSWORD:
